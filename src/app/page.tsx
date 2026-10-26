@@ -120,7 +120,7 @@ export default async function LandingPage() {
       {/* ------------------------------------------------------------- nav */}
       <header className="sticky top-0 z-50 border-b border-festival-line bg-festival-cream/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-2 px-5 lg:px-10">
-          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+          <Link href="/login" className="flex shrink-0 items-center gap-2.5">
             <BrandMark className="h-7 w-7" />
             <span className="text-[15px] font-semibold tracking-tight">{landing.brand}</span>
           </Link>
