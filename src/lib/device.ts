@@ -18,12 +18,25 @@ export type Device = {
  * Mode lives on the device, not in the session. A tablet that reboots mid-rush
  * must not land on a mode picker with a queue waiting.
  */
+/**
+ * Next percent-encodes cookie values on write, so "レジ1" comes back as
+ * "%E3%83%AC%E3%82%B81". Decode once, tolerating hand-set raw values.
+ */
+function readLabel(raw: string | undefined): string {
+  if (!raw) return "";
+  try {
+    return decodeURIComponent(raw).slice(0, 40);
+  } catch {
+    return raw.slice(0, 40);
+  }
+}
+
 export async function getDevice(): Promise<Device> {
   const store = await cookies();
   const raw = store.get(MODE_COOKIE)?.value;
   const mode: Mode | null = raw === "front" || raw === "back" ? raw : null;
 
-  const label = store.get(DEVICE_COOKIE)?.value?.slice(0, 40) || "";
+  const label = readLabel(store.get(DEVICE_COOKIE)?.value);
   return { mode, label };
 }
 
