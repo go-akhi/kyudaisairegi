@@ -120,9 +120,15 @@ export default async function LandingPage() {
       {/* ------------------------------------------------------------- nav */}
       <header className="sticky top-0 z-50 border-b border-festival-line bg-festival-cream/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-2 px-5 lg:px-10">
-          <Link href="/login" className="flex shrink-0 items-center gap-2.5">
+          <Link
+            href="/login"
+            title={landing.nav.signIn}
+            className="group flex shrink-0 items-center gap-2.5 rounded-[3px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-festival-red"
+          >
             <BrandMark className="h-7 w-7" />
-            <span className="text-[15px] font-semibold tracking-tight">{landing.brand}</span>
+            <span className="text-[15px] font-semibold tracking-tight underline-offset-4 transition-colors group-hover:text-festival-red group-hover:underline">
+              {landing.brand}
+            </span>
           </Link>
 
           <nav className="ml-6 hidden items-center lg:flex">
