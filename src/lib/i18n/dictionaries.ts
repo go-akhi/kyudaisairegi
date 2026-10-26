@@ -41,7 +41,7 @@ const en = {
   },
 
   landing: {
-    brand: "Stall Console",
+    brand: "Q-Regi",
     nav: {
       features: "Features",
       how: "How it works",
@@ -172,10 +172,10 @@ const en = {
       faq: "FAQ",
       stalls: "Stall menus",
       signIn: "Staff sign in",
-      rights: "© 2026 Stall Console",
+      rights: "© 2026 Q-Regi",
     },
     demo: {
-      host: "kyudaisai.app/counter",
+      host: "qregi.meetakhi.cc/counter",
       stall: "Takoyaki Stand",
       device: "Front 1",
       category: "Food",
@@ -257,7 +257,7 @@ const en = {
   },
 
   login: {
-    eyebrow: "Stall Console",
+    eyebrow: "Q-Regi",
     title: "Staff sign in",
     subtitle: "One account per stall, shared across its devices.",
     username: "Username",
@@ -473,7 +473,7 @@ const ja: Dict = {
   },
 
   landing: {
-    brand: "屋台コンソール",
+    brand: "Q-Regi",
     nav: {
       features: "機能",
       how: "使い方",
@@ -604,10 +604,10 @@ const ja: Dict = {
       faq: "よくある質問",
       stalls: "公開メニュー",
       signIn: "スタッフログイン",
-      rights: "© 2026 屋台コンソール",
+      rights: "© 2026 Q-Regi",
     },
     demo: {
-      host: "kyudaisai.app/counter",
+      host: "qregi.meetakhi.cc/counter",
       stall: "たこ焼き 屋台",
       device: "レジ1",
       category: "フード",
@@ -689,7 +689,7 @@ const ja: Dict = {
   },
 
   login: {
-    eyebrow: "屋台コンソール",
+    eyebrow: "Q-Regi",
     title: "スタッフログイン",
     subtitle: "屋台ごとに1つのアカウントを、すべての端末で共用します。",
     username: "ユーザー名",

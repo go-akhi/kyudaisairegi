@@ -3,8 +3,10 @@ import { getLocale } from "@/lib/i18n/locale";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Stall Console",
+  metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
+  title: "Q-Regi",
   description: "Festival stall ordering and kitchen queue",
+  applicationName: "Q-Regi",
 };
 
 export const viewport: Viewport = {

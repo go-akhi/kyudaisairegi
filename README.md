@@ -1,4 +1,4 @@
-# Stall Console
+# Q-Regi
 
 Cash-only ordering for a multi-stall university festival. One shared account per
 stall; each device chooses to be **storefront** (takes orders, hands them over,
@@ -59,12 +59,12 @@ descriptions, notes) is shown exactly as the owner wrote it.
 
 ## Deploy (homelab + Cloudflare Tunnel)
 
-1. Point `kyudaisai.<your-domain>` at the tunnel in the Cloudflare dashboard.
+1. Point `qregi.meetakhi.cc` at the tunnel in the Cloudflare dashboard.
 2. On the box, create a `.env` next to `docker-compose.yml`:
 
    ```env
    POSTGRES_PASSWORD=<long random>
-   APP_URL=https://kyudaisai.<your-domain>
+   APP_URL=https://qregi.meetakhi.cc
    TUNNEL_TOKEN=<from the Cloudflare tunnel>
    ```
 
@@ -84,7 +84,7 @@ descriptions, notes) is shown exactly as the owner wrote it.
    the QR encodes it. Cookies are `Secure` in production, so plain-HTTP access
    will silently refuse to log in.
 
-Optional: a Cloudflare cache rule for `kyudaisai.<domain>/s/*` with a 30-second
+Optional: a Cloudflare cache rule for `qregi.meetakhi.cc/s/*` with a 30-second
 edge TTL keeps menus loading if the homelab blips. Do not cache `/counter`,
 `/queue`, `/admin`, or `/api/*`.
 
