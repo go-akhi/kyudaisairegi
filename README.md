@@ -11,7 +11,8 @@ Next.js 16 · Postgres · Drizzle · Tailwind · self-hosted on the homelab.
 
 | Route | Who | What |
 |---|---|---|
-| `/` | public | Festival index of stalls |
+| `/` | public | Landing page — what prospective stall owners see |
+| `/stalls` | public | Festival index of stalls |
 | `/s/[slug]` | public | Stall menu, prices, sale, sold-out state |
 | `/login` | staff | Shared stall account or admin |
 | `/mode` | staff | Pick front/back + device name for this device |

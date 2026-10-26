@@ -47,7 +47,7 @@ export default async function StallMenuPage({
           <div className="flex h-full items-center justify-center text-6xl">🏮</div>
         )}
         <Link
-          href="/"
+          href="/stalls"
           className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-sm font-medium text-stone-900 backdrop-blur"
         >
           ← {t.menu.backToStalls}

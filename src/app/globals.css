@@ -31,6 +31,13 @@ textarea {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* marketing pages borrow the Segoe UI feel of microsoft.com */
+.font-landing {
+  font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system,
+    BlinkMacSystemFont, Roboto, "Helvetica Neue", "Hiragino Kaku Gothic ProN",
+    "Hiragino Sans", Meiryo, "Noto Sans JP", sans-serif;
+}
+
 /* number inputs: keep spinners off the way of fat fingers */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
