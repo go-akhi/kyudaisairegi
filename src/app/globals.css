@@ -5,6 +5,21 @@
     system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --color-paper: #faf8f4;
+
+  /* palette lifted from kyudaisai.jp/79th */
+  --color-festival-cream: #fffef6;
+  --color-festival-wash: #fbf6ea;
+  --color-festival-sand: #f4ecdd;
+  --color-festival-line: #e7dcc7;
+  --color-festival-ink: #402000;
+  --color-festival-ink-soft: #614b37;
+  --color-festival-muted: #856f58;
+  --color-festival-red: #993333;
+  --color-festival-red-deep: #7c2828;
+  --color-festival-gold: #fff080;
+  --color-festival-teal: #1b6373;
+  --color-festival-rose: #b27171;
+  --color-festival-tan: #c7b299;
 }
 
 :root {

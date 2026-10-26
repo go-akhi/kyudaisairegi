@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { CheckIcon, HandoverMockup, KitchenMockup, MenuMockup, PhoneMockup, TillMockup } from "@/components/landing/mockups";
 import { LocaleSwitcher } from "@/components/locale-switcher";
@@ -8,7 +9,11 @@ import QRCode from "qrcode";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata() {
+export const viewport: Viewport = {
+  themeColor: "#fffef6",
+};
+
+export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getDict();
   return {
     title: `${t.landing.brand} — ${t.landing.hero.title}`,
@@ -22,13 +27,13 @@ export async function generateMetadata() {
 }
 
 const blueButton =
-  "inline-flex h-12 items-center justify-center rounded-[2px] bg-[#0067b8] px-6 text-[15px] font-semibold text-white transition-colors hover:bg-[#005da6] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0067b8]";
+  "inline-flex h-12 items-center justify-center rounded-[2px] bg-festival-red px-6 text-[15px] font-semibold text-festival-cream transition-colors hover:bg-festival-red-deep focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-festival-red";
 
 const linkButton =
-  "inline-flex h-12 items-center justify-center gap-1.5 rounded-[2px] px-1 text-[15px] font-semibold text-[#0067b8] underline decoration-[#0067b8]/40 underline-offset-[6px] transition-colors hover:decoration-[#0067b8]";
+  "inline-flex h-12 items-center justify-center gap-1.5 rounded-[2px] px-1 text-[15px] font-semibold text-festival-red underline decoration-festival-red/40 underline-offset-[6px] transition-colors hover:decoration-festival-red";
 
 const eyebrowClass =
-  "text-[13px] font-semibold tracking-[0.08em] text-[#0067b8] uppercase";
+  "text-[13px] font-semibold tracking-[0.08em] text-festival-red uppercase";
 
 function ReceiptIcon({ className }: { className?: string }) {
   return (
@@ -76,16 +81,16 @@ function Feature({
   tint?: boolean;
 }) {
   return (
-    <div className={tint ? "border-t border-black/5 bg-[#faf9f8]" : "border-t border-black/5"}>
+    <div className={tint ? "border-t border-festival-line bg-festival-wash" : "border-t border-festival-line"}>
       <div className="mx-auto grid max-w-[1400px] items-center gap-10 px-5 py-14 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-20">
         <div className={flip ? "lg:order-2" : undefined}>
-          <h2 className="text-[1.7rem] leading-[1.2] font-semibold tracking-[-0.02em] text-[#1a1a1a] sm:text-[2.1rem]">
+          <h2 className="text-[1.7rem] leading-[1.2] font-semibold tracking-[-0.02em] text-festival-ink sm:text-[2.1rem]">
             {title}
           </h2>
-          <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-[#4b4b4b]">{body}</p>
+          <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-festival-ink-soft">{body}</p>
           <ul className="mt-6 space-y-3">
             {points.map((point) => (
-              <li key={point} className="flex gap-2.5 text-[14px] leading-snug text-[#3b3a39]">
+              <li key={point} className="flex gap-2.5 text-[14px] leading-snug text-festival-ink-soft">
                 <CheckIcon className="mt-px h-5 w-5 shrink-0" />
                 <span>{point}</span>
               </li>
@@ -113,7 +118,7 @@ export default async function LandingPage() {
         type: "svg",
         margin: 0,
         width: 140,
-        color: { dark: "#1a1a1a", light: "#ffffff" },
+        color: { dark: "#402000", light: "#ffffff" },
       })
     : null;
 
@@ -125,12 +130,12 @@ export default async function LandingPage() {
   ];
 
   return (
-    <div className="font-landing min-h-screen bg-white text-[#1a1a1a]">
+    <div className="font-landing min-h-screen bg-festival-cream text-festival-ink">
       {/* ------------------------------------------------------------- nav */}
-      <header className="sticky top-0 z-50 border-b border-black/5 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-festival-line bg-festival-cream/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-2 px-5 lg:px-10">
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="grid h-7 w-7 place-items-center rounded-[4px] bg-[#0067b8] text-white">
+            <span className="grid h-7 w-7 place-items-center rounded-[4px] bg-festival-red text-festival-cream">
               <ReceiptIcon className="h-4 w-4" />
             </span>
             <span className="text-[15px] font-semibold tracking-tight">{landing.brand}</span>
@@ -142,7 +147,7 @@ export default async function LandingPage() {
                 <a
                   key={item.href}
                   href={item.href}
-                  className="border-b-2 border-transparent px-3 py-4 text-[13px] text-[#262626] hover:border-[#0067b8]"
+                  className="border-b-2 border-transparent px-3 py-4 text-[13px] text-festival-ink hover:border-festival-red"
                 >
                   {item.label}
                 </a>
@@ -150,7 +155,7 @@ export default async function LandingPage() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="border-b-2 border-transparent px-3 py-4 text-[13px] text-[#262626] hover:border-[#0067b8]"
+                  className="border-b-2 border-transparent px-3 py-4 text-[13px] text-festival-ink hover:border-festival-red"
                 >
                   {item.label}
                 </Link>
@@ -166,30 +171,30 @@ export default async function LandingPage() {
             />
             <Link
               href="/login"
-              className="ml-1 hidden h-9 items-center rounded-[2px] bg-[#0067b8] px-4 text-[13px] font-semibold text-white hover:bg-[#005da6] sm:inline-flex"
+              className="ml-1 hidden h-9 items-center rounded-[2px] bg-festival-red px-4 text-[13px] font-semibold text-festival-cream hover:bg-festival-red-deep sm:inline-flex"
             >
               {landing.nav.signIn}
             </Link>
             <details className="relative lg:hidden">
               <summary
                 aria-label={landing.nav.menuLabel}
-                className="grid h-9 w-9 cursor-pointer list-none place-items-center rounded-[2px] text-[#262626] hover:bg-black/5 [&::-webkit-details-marker]:hidden"
+                className="grid h-9 w-9 cursor-pointer list-none place-items-center rounded-[2px] text-festival-ink hover:bg-festival-sand [&::-webkit-details-marker]:hidden"
               >
                 <MenuIcon className="h-5 w-5" />
               </summary>
-              <div className="absolute right-0 mt-1 w-48 rounded-md border border-black/10 bg-white py-1 shadow-xl">
+              <div className="absolute right-0 mt-1 w-48 rounded-md border border-festival-line bg-festival-cream py-1 shadow-xl">
                 {navLinks.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="block px-4 py-2.5 text-sm text-[#262626] hover:bg-[#f3f2f1]"
+                    className="block px-4 py-2.5 text-sm text-festival-ink hover:bg-festival-sand"
                   >
                     {item.label}
                   </Link>
                 ))}
                 <Link
                   href="/login"
-                  className="mt-1 block border-t border-black/10 px-4 py-2.5 text-sm font-semibold text-[#0067b8] hover:bg-[#f3f2f1] sm:hidden"
+                  className="mt-1 block border-t border-festival-line px-4 py-2.5 text-sm font-semibold text-festival-red hover:bg-festival-sand sm:hidden"
                 >
                   {landing.nav.signIn}
                 </Link>
@@ -201,10 +206,10 @@ export default async function LandingPage() {
 
       <main>
         {/* ------------------------------------------------------------ hero */}
-        <section className="relative overflow-hidden border-b border-black/5 bg-white">
+        <section className="relative overflow-hidden border-b border-festival-line bg-festival-cream">
           <div aria-hidden className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-64 -right-48 h-[600px] w-[600px] rounded-full bg-[#d6e9f8] opacity-80 blur-3xl" />
-            <div className="absolute top-24 right-[26%] h-72 w-72 rounded-full bg-[#e0f3ec] opacity-70 blur-3xl" />
+            <div className="absolute -top-64 -right-48 h-[600px] w-[600px] rounded-full bg-[#f6e3dc] opacity-80 blur-3xl" />
+            <div className="absolute top-24 right-[26%] h-72 w-72 rounded-full bg-[#fdf6d8] opacity-70 blur-3xl" />
           </div>
 
           <div className="relative mx-auto grid max-w-[1400px] items-center gap-12 px-5 py-14 lg:grid-cols-[1fr_1.1fr] lg:gap-10 lg:px-10 lg:py-24">
@@ -213,7 +218,7 @@ export default async function LandingPage() {
               <h1 className="mt-3 max-w-[620px] text-[2.55rem] leading-[1.06] font-semibold tracking-[-0.03em] text-balance sm:text-5xl xl:text-[3.35rem]">
                 {landing.hero.title}
               </h1>
-              <p className="mt-5 max-w-lg text-[17px] leading-[1.65] text-[#4b4b4b]">
+              <p className="mt-5 max-w-lg text-[17px] leading-[1.65] text-festival-ink-soft">
                 {landing.hero.subtitle}
               </p>
 
@@ -227,10 +232,10 @@ export default async function LandingPage() {
                 </Link>
               </div>
 
-              <p className="mt-6 text-xs text-[#616161]">{landing.hero.note}</p>
+              <p className="mt-6 text-xs text-festival-muted">{landing.hero.note}</p>
               <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
                 {landing.hero.badges.map((badge) => (
-                  <li key={badge} className="flex items-center gap-1.5 text-[11px] text-[#616161]">
+                  <li key={badge} className="flex items-center gap-1.5 text-[11px] text-festival-muted">
                     <CheckIcon className="h-3.5 w-3.5" />
                     {badge}
                   </li>
@@ -241,16 +246,16 @@ export default async function LandingPage() {
             <div className="relative">
               <div
                 aria-hidden
-                className="absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-[#e8f1fa] via-[#f7fbfe] to-[#ecf7f2]"
+                className="absolute -inset-5 rounded-[2rem] bg-gradient-to-br from-[#f8e7df] via-festival-cream to-[#fdf6d8]"
               />
               <div className="relative px-1 py-3 sm:px-4">
                 <TillMockup d={landing.demo} />
               </div>
-              <div className="absolute -bottom-4 left-2 hidden items-center gap-2 rounded-md bg-white px-3 py-2 text-[11px] font-semibold shadow-lg ring-1 ring-black/10 sm:flex">
-                <span className="h-2 w-2 rounded-full bg-[#107c10]" />
+              <div className="absolute -bottom-4 left-2 hidden items-center gap-2 rounded-md bg-festival-cream px-3 py-2 text-[11px] font-semibold shadow-lg ring-1 ring-festival-line sm:flex">
+                <span className="h-2 w-2 rounded-full bg-festival-teal" />
                 {landing.demo.readyChip}
               </div>
-              <div className="absolute -top-2 right-4 hidden -rotate-2 rounded-md bg-[#0067b8] px-3 py-2 text-[11px] font-semibold text-white shadow-lg sm:block">
+              <div className="absolute -top-2 right-4 hidden -rotate-2 rounded-md bg-festival-gold px-3 py-2 text-[11px] font-semibold text-festival-ink shadow-lg sm:block">
                 {landing.demo.saleBanner}
               </div>
             </div>
@@ -258,14 +263,14 @@ export default async function LandingPage() {
         </section>
 
         {/* ----------------------------------------------------------- facts */}
-        <section className="bg-white">
-          <dl className="mx-auto grid max-w-[1400px] grid-cols-2 gap-px bg-black/5 px-5 py-0 sm:grid-cols-4 lg:px-10">
+        <section className="bg-festival-cream">
+          <dl className="mx-auto grid max-w-[1400px] grid-cols-2 gap-px bg-festival-line px-5 py-0 sm:grid-cols-4 lg:px-10">
             {landing.facts.map((fact) => (
-              <div key={fact.label} className="bg-white px-4 py-6 first:pl-0">
-                <dt className="text-2xl font-semibold tracking-tight text-[#1a1a1a]">
+              <div key={fact.label} className="bg-festival-cream px-4 py-6 first:pl-0">
+                <dt className="text-2xl font-semibold tracking-tight text-festival-ink">
                   {fact.value}
                 </dt>
-                <dd className="mt-1 text-xs text-[#616161]">{fact.label}</dd>
+                <dd className="mt-1 text-xs text-festival-muted">{fact.label}</dd>
               </div>
             ))}
           </dl>
@@ -278,7 +283,7 @@ export default async function LandingPage() {
             <h2 className="mt-2 max-w-2xl text-3xl leading-tight font-semibold tracking-[-0.02em] sm:text-[2.5rem]">
               {landing.features.title}
             </h2>
-            <p className="mt-3 max-w-xl text-[15px] text-[#616161]">
+            <p className="mt-3 max-w-xl text-[15px] text-festival-muted">
               {landing.features.subtitle}
             </p>
           </div>
@@ -313,10 +318,10 @@ export default async function LandingPage() {
             body={landing.publicFeature.body}
             points={landing.publicFeature.points}
             visual={
-              <div className="relative mx-auto flex max-w-[380px] justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[#e8f1fa] via-white to-[#eaf6f0] px-8 py-10 ring-1 ring-black/5">
+              <div className="relative mx-auto flex max-w-[380px] justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[#fdf6d8] via-festival-cream to-[#e9f0ef] px-8 py-10 ring-1 ring-festival-line">
                 <div
                   aria-hidden
-                  className="absolute -top-16 -right-10 h-44 w-44 rounded-full border border-[#0067b8]/10"
+                  className="absolute -top-16 -right-10 h-44 w-44 rounded-full border border-festival-red/10"
                 />
                 <div className="relative">
                   <PhoneMockup d={landing.demo} />
@@ -331,26 +336,26 @@ export default async function LandingPage() {
         {/* ------------------------------------------------------------- how */}
         <section
           id="how"
-          className="scroll-mt-14 border-t border-black/5 bg-white px-5 py-16 lg:px-10 lg:py-24"
+          className="scroll-mt-14 border-t border-festival-line bg-festival-cream px-5 py-16 lg:px-10 lg:py-24"
         >
           <div className="mx-auto max-w-[1400px]">
             <p className={eyebrowClass}>{landing.how.eyebrow}</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-[-0.02em] sm:text-[2.5rem]">
               {landing.how.title}
             </h2>
-            <p className="mt-3 max-w-lg text-[15px] text-[#616161]">{landing.how.subtitle}</p>
+            <p className="mt-3 max-w-lg text-[15px] text-festival-muted">{landing.how.subtitle}</p>
 
             <ol className="mt-10 grid gap-4 md:grid-cols-3">
               {landing.how.steps.map((step, index) => (
                 <li
                   key={step.title}
-                  className="rounded-lg bg-[#faf9f8] p-6 ring-1 ring-black/5"
+                  className="rounded-lg bg-festival-wash p-6 ring-1 ring-festival-line"
                 >
-                  <span className="grid h-8 w-8 place-items-center rounded-full bg-[#0067b8] text-sm font-semibold text-white">
+                  <span className="grid h-8 w-8 place-items-center rounded-full bg-festival-red text-sm font-semibold text-festival-cream">
                     {index + 1}
                   </span>
                   <h3 className="mt-4 text-lg font-semibold tracking-tight">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[#616161]">{step.body}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-festival-muted">{step.body}</p>
                 </li>
               ))}
             </ol>
@@ -365,7 +370,7 @@ export default async function LandingPage() {
         {/* ------------------------------------------------------------- faq */}
         <section
           id="faq"
-          className="scroll-mt-14 border-t border-black/5 bg-[#faf9f8] px-5 py-16 lg:px-10 lg:py-24"
+          className="scroll-mt-14 border-t border-festival-line bg-festival-wash px-5 py-16 lg:px-10 lg:py-24"
         >
           <div className="mx-auto grid max-w-[1400px] gap-10 lg:grid-cols-[320px_1fr] lg:gap-16">
             <div>
@@ -375,17 +380,17 @@ export default async function LandingPage() {
               </h2>
             </div>
 
-            <div className="border-t border-black/10">
+            <div className="border-t border-festival-line">
               {landing.faq.items.map((item) => (
-                <details key={item.q} className="group border-b border-black/10 py-5">
+                <details key={item.q} className="group border-b border-festival-line py-5">
                   <summary className="flex cursor-pointer list-none items-start justify-between gap-6 [&::-webkit-details-marker]:hidden">
                     <span className="text-[15px] font-semibold">{item.q}</span>
                     <span className="relative mt-1 h-4 w-4 shrink-0">
-                      <span className="absolute top-1/2 left-0 h-[1.5px] w-4 -translate-y-1/2 bg-[#0067b8]" />
-                      <span className="absolute top-0 left-1/2 h-4 w-[1.5px] -translate-x-1/2 bg-[#0067b8] transition-opacity group-open:opacity-0" />
+                      <span className="absolute top-1/2 left-0 h-[1.5px] w-4 -translate-y-1/2 bg-festival-red" />
+                      <span className="absolute top-0 left-1/2 h-4 w-[1.5px] -translate-x-1/2 bg-festival-red transition-opacity group-open:opacity-0" />
                     </span>
                   </summary>
-                  <p className="mt-2 max-w-2xl pr-8 text-sm leading-relaxed text-[#616161]">
+                  <p className="mt-2 max-w-2xl pr-8 text-sm leading-relaxed text-festival-muted">
                     {item.a}
                   </p>
                 </details>
@@ -395,30 +400,30 @@ export default async function LandingPage() {
         </section>
 
         {/* ------------------------------------------------------------- cta */}
-        <section className="relative overflow-hidden bg-[#0067b8] px-5 py-16 text-white lg:px-10 lg:py-20">
+        <section className="relative overflow-hidden bg-festival-red px-5 py-16 text-festival-cream lg:px-10 lg:py-20">
           <div aria-hidden className="pointer-events-none absolute inset-0">
-            <div className="absolute -top-32 -right-24 h-80 w-80 rounded-full border border-white/15" />
-            <div className="absolute -right-8 -bottom-40 h-96 w-96 rounded-full border border-white/10" />
+            <div className="absolute -top-32 -right-24 h-80 w-80 rounded-full border border-festival-cream/15" />
+            <div className="absolute -right-8 -bottom-40 h-96 w-96 rounded-full border border-festival-cream/10" />
           </div>
           <div className="relative mx-auto flex max-w-[1400px] flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
             <div className="max-w-2xl">
               <h2 className="text-3xl leading-tight font-semibold tracking-[-0.02em] sm:text-4xl">
                 {landing.cta.title}
               </h2>
-              <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-white/85">
+              <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-festival-cream/85">
                 {landing.cta.body}
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/login"
-                className="inline-flex h-12 items-center rounded-[2px] bg-white px-6 text-[15px] font-semibold text-[#0067b8] hover:bg-white/90"
+                className="inline-flex h-12 items-center rounded-[2px] bg-festival-cream px-6 text-[15px] font-semibold text-festival-red hover:bg-festival-cream/90"
               >
                 {landing.cta.primary}
               </Link>
               <Link
                 href="/stalls"
-                className="inline-flex h-12 items-center rounded-[2px] border border-white/70 px-6 text-[15px] font-semibold text-white hover:bg-white/10"
+                className="inline-flex h-12 items-center rounded-[2px] border border-festival-cream/70 px-6 text-[15px] font-semibold text-festival-cream hover:bg-festival-cream/10"
               >
                 {landing.cta.secondary}
               </Link>
@@ -428,22 +433,22 @@ export default async function LandingPage() {
       </main>
 
       {/* ---------------------------------------------------------- footer */}
-      <footer className="border-t border-black/5 bg-white px-5 py-12 lg:px-10">
+      <footer className="border-t border-festival-line bg-festival-cream px-5 py-12 lg:px-10">
         <div className="mx-auto grid max-w-[1400px] gap-8 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="grid h-7 w-7 place-items-center rounded-[4px] bg-[#0067b8] text-white">
+              <span className="grid h-7 w-7 place-items-center rounded-[4px] bg-festival-red text-festival-cream">
                 <ReceiptIcon className="h-4 w-4" />
               </span>
               <span className="text-[15px] font-semibold tracking-tight">{landing.brand}</span>
             </div>
-            <p className="mt-3 max-w-xs text-sm leading-relaxed text-[#616161]">
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-festival-muted">
               {landing.footer.tagline}
             </p>
           </div>
 
           <nav aria-label={landing.footer.product}>
-            <p className="text-xs font-semibold tracking-[0.08em] uppercase text-[#616161]">
+            <p className="text-xs font-semibold tracking-[0.08em] uppercase text-festival-muted">
               {landing.footer.product}
             </p>
             <ul className="mt-3 space-y-2 text-sm">
@@ -454,7 +459,7 @@ export default async function LandingPage() {
           </nav>
 
           <nav aria-label={landing.footer.pages}>
-            <p className="text-xs font-semibold tracking-[0.08em] uppercase text-[#616161]">
+            <p className="text-xs font-semibold tracking-[0.08em] uppercase text-festival-muted">
               {landing.footer.pages}
             </p>
             <ul className="mt-3 space-y-2 text-sm">
@@ -464,7 +469,7 @@ export default async function LandingPage() {
           </nav>
         </div>
 
-        <div className="mx-auto mt-10 flex max-w-[1400px] flex-wrap items-center justify-between gap-4 border-t border-black/10 pt-6 text-xs text-[#616161]">
+        <div className="mx-auto mt-10 flex max-w-[1400px] flex-wrap items-center justify-between gap-4 border-t border-festival-line pt-6 text-xs text-festival-muted">
           <span>{landing.footer.rights}</span>
           <LocaleSwitcher
             current={locale}

@@ -10,15 +10,15 @@ import { cx } from "@/components/ui";
 export type Demo = Dict["landing"]["demo"];
 
 const tones: Record<string, string> = {
-  normal: "bg-white ring-black/10",
-  warn: "bg-[#fff8e5] ring-[#c99a00]/35",
-  late: "bg-[#fff3f3] ring-[#c4314b]/35",
+  normal: "bg-festival-cream ring-festival-line",
+  warn: "bg-[#fdf3d3] ring-[#b07a1a]/35",
+  late: "bg-[#f7e4df] ring-festival-red/35",
 };
 
 const ageTones: Record<string, string> = {
-  normal: "bg-[#f3f2f1] text-[#4b4b4b]",
-  warn: "bg-[#c99a00] text-white",
-  late: "bg-[#c4314b] text-white",
+  normal: "bg-festival-sand text-festival-ink-soft",
+  warn: "bg-[#b07a1a] text-festival-cream",
+  late: "bg-festival-red text-festival-cream",
 };
 
 function LockIcon({ className }: { className?: string }) {
@@ -33,8 +33,8 @@ function LockIcon({ className }: { className?: string }) {
 function CheckIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
-      <circle cx="10" cy="10" r="9" fill="#e8f1fa" />
-      <path d="m6 10.2 2.6 2.6L14 7.4" stroke="#0067b8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="10" cy="10" r="9" fill="#e3ecec" />
+      <path d="m6 10.2 2.6 2.6L14 7.4" stroke="#1b6373" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -46,17 +46,17 @@ export function TillMockup({ d, className }: { d: Demo; className?: string }) {
     <div
       aria-hidden
       className={cx(
-        "overflow-hidden rounded-xl bg-white shadow-[0_36px_90px_-32px_rgba(15,40,70,0.45)] ring-1 ring-black/10",
+        "overflow-hidden rounded-xl bg-festival-cream shadow-[0_36px_90px_-32px_rgba(64,32,0,0.45)] ring-1 ring-festival-line",
         className,
       )}
     >
-      <div className="flex items-center gap-2 border-b border-black/5 bg-[#f3f2f1] px-3 py-2">
+      <div className="flex items-center gap-2 border-b border-festival-line bg-festival-sand px-3 py-2">
         <span className="flex gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#e1dfdd]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#e1dfdd]" />
-          <span className="h-2.5 w-2.5 rounded-full bg-[#e1dfdd]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#dbcbb4]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#dbcbb4]" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[#dbcbb4]" />
         </span>
-        <span className="mx-auto flex max-w-[70%] items-center gap-1.5 truncate rounded-[3px] bg-white px-3 py-1 text-[10px] text-[#605e5c] ring-1 ring-black/5">
+        <span className="mx-auto flex max-w-[70%] items-center gap-1.5 truncate rounded-[3px] bg-festival-cream px-3 py-1 text-[10px] text-festival-muted ring-1 ring-festival-line">
           <LockIcon className="h-3 w-3 shrink-0" />
           <span className="truncate">{d.host}</span>
         </span>
@@ -64,58 +64,58 @@ export function TillMockup({ d, className }: { d: Demo; className?: string }) {
       </div>
 
       <div className="flex flex-col sm:flex-row">
-        <div className="hidden w-[96px] shrink-0 flex-col border-r border-black/5 bg-[#faf9f8] p-2.5 sm:flex">
+        <div className="hidden w-[96px] shrink-0 flex-col border-r border-festival-line bg-festival-wash p-2.5 sm:flex">
           <div className="mb-2 flex items-center gap-1.5 px-0.5">
-            <span className="grid h-5 w-5 place-items-center rounded-[3px] bg-[#0067b8] text-[9px] font-bold text-white">
+            <span className="grid h-5 w-5 place-items-center rounded-[3px] bg-festival-red text-[9px] font-bold text-festival-cream">
               屋
             </span>
             <span className="truncate text-[8px] leading-tight font-semibold whitespace-nowrap">
               {d.stall}
             </span>
           </div>
-          <span className="rounded-[3px] bg-[#e8f1fa] px-2 py-1 text-[9px] font-semibold text-[#0067b8]">
+          <span className="rounded-[3px] bg-festival-red px-2 py-1 text-[9px] font-semibold text-festival-cream">
             {d.newOrder}
           </span>
-          <span className="mt-0.5 px-2 py-1 text-[9px] text-[#605e5c]">{d.menuTitle}</span>
-          <span className="mt-auto border-t border-black/5 pt-2 text-[8px] text-[#8a8886]">
+          <span className="mt-0.5 px-2 py-1 text-[9px] text-festival-muted">{d.menuTitle}</span>
+          <span className="mt-auto border-t border-festival-line pt-2 text-[8px] text-festival-muted">
             {d.device}
           </span>
         </div>
 
         <div className="min-w-0 flex-1 p-3">
           <div className="mb-2 flex items-center gap-1.5">
-            <span className="rounded-[4px] bg-[#1a1a1a] px-2.5 py-1.5 text-[10px] font-semibold text-white">
+            <span className="rounded-[4px] bg-festival-ink px-2.5 py-1.5 text-[10px] font-semibold text-festival-cream">
               {d.newOrder}
             </span>
-            <span className="rounded-[4px] bg-white px-2.5 py-1.5 text-[10px] font-medium text-[#4b4b4b] ring-1 ring-black/10">
+            <span className="rounded-[4px] bg-festival-cream px-2.5 py-1.5 text-[10px] font-medium text-festival-ink-soft ring-1 ring-festival-line">
               {d.readyTab}
-              <span className="ml-1.5 rounded-[3px] bg-[#f3f2f1] px-1 py-0.5 text-[9px]">2</span>
+              <span className="ml-1.5 rounded-[3px] bg-festival-sand px-1 py-0.5 text-[9px]">2</span>
             </span>
           </div>
 
-          <p className="mb-1.5 text-[8px] font-semibold tracking-[0.14em] text-[#8a8886] uppercase">
+          <p className="mb-1.5 text-[8px] font-semibold tracking-[0.14em] text-festival-muted uppercase">
             {d.category}
           </p>
           <div className="grid grid-cols-2 gap-1.5">
             {d.items.map((item) => (
               <div
                 key={item.name}
-                className="rounded-lg bg-white p-2 ring-1 ring-black/10"
+                className="rounded-lg bg-festival-cream p-2 ring-1 ring-festival-line"
               >
                 <div className="flex items-start justify-between gap-1">
                   <span className="text-[10px] leading-tight font-semibold">{item.name}</span>
                   <span className="shrink-0 text-[10px] font-semibold">{item.price}</span>
                 </div>
-                <span className="mt-1 block text-[8px] text-[#8a8886]">{d.tapToAdd}</span>
+                <span className="mt-1 block text-[8px] text-festival-muted">{d.tapToAdd}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="w-full shrink-0 border-t border-black/5 bg-[#faf9f8] p-3 sm:w-[188px] sm:border-t-0 sm:border-l">
+        <div className="w-full shrink-0 border-t border-festival-line bg-festival-wash p-3 sm:w-[188px] sm:border-t-0 sm:border-l">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-semibold">{d.orderLabel}</span>
-            <span className="rounded bg-[#dff6dd] px-1.5 py-0.5 text-[8px] font-semibold text-[#107c10]">
+            <span className="rounded bg-[#dfeaea] px-1.5 py-0.5 text-[8px] font-semibold text-festival-teal">
               {d.open}
             </span>
           </div>
@@ -131,12 +131,12 @@ export function TillMockup({ d, className }: { d: Demo; className?: string }) {
             ))}
           </ul>
 
-          <div className="mt-2 space-y-1 border-t border-black/10 pt-2 text-[9px]">
-            <div className="flex justify-between text-[#605e5c]">
+          <div className="mt-2 space-y-1 border-t border-festival-line pt-2 text-[9px]">
+            <div className="flex justify-between text-festival-muted">
               <span>{d.subtotal}</span>
               <span>{d.subtotalValue}</span>
             </div>
-            <div className="flex justify-between text-[#b54708]">
+            <div className="flex justify-between text-festival-red">
               <span>{d.discount}</span>
               <span>{d.discountValue}</span>
             </div>
@@ -146,7 +146,7 @@ export function TillMockup({ d, className }: { d: Demo; className?: string }) {
             </div>
           </div>
 
-          <div className="mt-2 rounded-[4px] bg-[#0067b8] py-2 text-center text-[10px] font-semibold text-white">
+          <div className="mt-2 rounded-[4px] bg-festival-red py-2 text-center text-[10px] font-semibold text-festival-cream">
             {d.place}
           </div>
         </div>
@@ -162,23 +162,23 @@ export function HandoverMockup({ d, className }: { d: Demo; className?: string }
 
   return (
     <div aria-hidden className={cx("relative mx-auto w-full max-w-[430px]", className)}>
-      <div className="rounded-xl bg-white p-4 shadow-[0_30px_70px_-32px_rgba(15,40,70,0.4)] ring-1 ring-black/10">
+      <div className="rounded-xl bg-festival-cream p-4 shadow-[0_30px_70px_-32px_rgba(64,32,0,0.4)] ring-1 ring-festival-line">
         <div className="mb-2.5 flex items-center justify-between">
-          <span className="text-[10px] font-semibold tracking-[0.12em] text-[#8a8886] uppercase">
+          <span className="text-[10px] font-semibold tracking-[0.12em] text-festival-muted uppercase">
             {d.readyTab}
           </span>
-          <span className="rounded bg-[#dff6dd] px-1.5 py-0.5 text-[9px] font-semibold text-[#107c10]">
+          <span className="rounded bg-[#dfeaea] px-1.5 py-0.5 text-[9px] font-semibold text-festival-teal">
             2
           </span>
         </div>
 
         <div className="space-y-2">
           {tickets.map((ticket) => (
-            <div key={ticket.number} className="rounded-lg bg-[#faf9f8] p-2.5 ring-1 ring-black/5">
+            <div key={ticket.number} className="rounded-lg bg-festival-wash p-2.5 ring-1 ring-festival-line">
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="text-[15px] leading-none font-bold">{ticket.number}</p>
-                  <p className="mt-1 text-[9px] text-[#605e5c]">{ticket.name}</p>
+                  <p className="mt-1 text-[9px] text-festival-muted">{ticket.name}</p>
                 </div>
                 <span
                   className={cx(
@@ -189,12 +189,12 @@ export function HandoverMockup({ d, className }: { d: Demo; className?: string }
                   {ticket.age}
                 </span>
               </div>
-              <ul className="mt-1.5 space-y-0.5 text-[10px] text-[#3b3a39]">
+              <ul className="mt-1.5 space-y-0.5 text-[10px] text-festival-ink-soft">
                 {ticket.items.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              <div className="mt-2 rounded-[3px] bg-[#107c10] py-1.5 text-center text-[9px] font-semibold text-white">
+              <div className="mt-2 rounded-[3px] bg-festival-teal py-1.5 text-center text-[9px] font-semibold text-festival-cream">
                 {d.handOver}
               </div>
             </div>
@@ -202,8 +202,8 @@ export function HandoverMockup({ d, className }: { d: Demo; className?: string }
         </div>
       </div>
 
-      <div className="mt-3 ml-auto w-44 rounded-lg bg-white p-3 shadow-[0_20px_50px_-24px_rgba(15,40,70,0.4)] ring-1 ring-black/10">
-        <p className="text-[8px] font-semibold tracking-wide text-[#8a8886] uppercase">
+      <div className="mt-3 ml-auto w-44 rounded-lg bg-festival-cream p-3 shadow-[0_20px_50px_-24px_rgba(64,32,0,0.4)] ring-1 ring-festival-line">
+        <p className="text-[8px] font-semibold tracking-wide text-festival-muted uppercase">
           {d.sale}
         </p>
         <div className="mt-1 flex gap-1">
@@ -213,8 +213,8 @@ export function HandoverMockup({ d, className }: { d: Demo; className?: string }
               className={cx(
                 "flex-1 rounded-[3px] px-1 py-1.5 text-center text-[8px] font-semibold",
                 index === 1
-                  ? "bg-[#0067b8] text-white"
-                  : "bg-white text-[#4b4b4b] ring-1 ring-black/10",
+                  ? "bg-festival-red text-festival-cream"
+                  : "bg-festival-cream text-festival-ink-soft ring-1 ring-festival-line",
               )}
             >
               {option}
@@ -233,16 +233,16 @@ export function KitchenMockup({ d, className }: { d: Demo; className?: string })
     <div
       aria-hidden
       className={cx(
-        "rounded-xl bg-[#f3f2f1] p-3 shadow-[0_30px_70px_-34px_rgba(15,40,70,0.4)] ring-1 ring-black/10",
+        "rounded-xl bg-festival-sand p-3 shadow-[0_30px_70px_-34px_rgba(64,32,0,0.4)] ring-1 ring-festival-line",
         className,
       )}
     >
       <div className="mb-2.5 flex items-center justify-between px-0.5">
         <div>
           <p className="text-[11px] font-semibold">{d.kitchen}</p>
-          <p className="text-[8px] text-[#8a8886]">{d.kitchenSub}</p>
+          <p className="text-[8px] text-festival-muted">{d.kitchenSub}</p>
         </div>
-        <span className="rounded-[3px] bg-white px-2 py-1 text-[9px] font-medium text-[#605e5c] ring-1 ring-black/10">
+        <span className="rounded-[3px] bg-festival-cream px-2 py-1 text-[9px] font-medium text-festival-muted ring-1 ring-festival-line">
           {d.preparing} · {d.openCount}
         </span>
       </div>
@@ -256,7 +256,7 @@ export function KitchenMockup({ d, className }: { d: Demo; className?: string })
             <div className="flex items-start justify-between gap-2">
               <div>
                 <p className="text-[15px] leading-none font-bold">{ticket.number}</p>
-                <p className="mt-1 text-[9px] text-[#605e5c]">{ticket.name}</p>
+                <p className="mt-1 text-[9px] text-festival-muted">{ticket.name}</p>
               </div>
               <span
                 className={cx(
@@ -267,12 +267,12 @@ export function KitchenMockup({ d, className }: { d: Demo; className?: string })
                 {ticket.age}
               </span>
             </div>
-            <ul className="mt-2 space-y-0.5 text-[10px] text-[#3b3a39]">
+            <ul className="mt-2 space-y-0.5 text-[10px] text-festival-ink-soft">
               {ticket.items.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
-            <div className="mt-2 rounded-[3px] bg-[#107c10] py-1.5 text-center text-[9px] font-semibold text-white">
+            <div className="mt-2 rounded-[3px] bg-festival-teal py-1.5 text-center text-[9px] font-semibold text-festival-cream">
               {d.markReady}
             </div>
           </div>
@@ -297,19 +297,19 @@ export function MenuMockup({
     <div
       aria-hidden
       className={cx(
-        "space-y-2.5 rounded-xl bg-white p-3.5 shadow-[0_30px_70px_-34px_rgba(15,40,70,0.4)] ring-1 ring-black/10",
+        "space-y-2.5 rounded-xl bg-festival-cream p-3.5 shadow-[0_30px_70px_-34px_rgba(64,32,0,0.4)] ring-1 ring-festival-line",
         className,
       )}
     >
       <div className="flex items-center justify-between">
         <p className="text-[11px] font-semibold">{d.menuTitle}</p>
-        <span className="rounded-[3px] bg-[#dff6dd] px-1.5 py-0.5 text-[8px] font-semibold text-[#107c10]">
+        <span className="rounded-[3px] bg-[#dfeaea] px-1.5 py-0.5 text-[8px] font-semibold text-festival-teal">
           {d.open}
         </span>
       </div>
 
       <div>
-        <p className="mb-1 text-[8px] font-semibold tracking-wide text-[#8a8886] uppercase">
+        <p className="mb-1 text-[8px] font-semibold tracking-wide text-festival-muted uppercase">
           {d.sale}
         </p>
         <div className="flex gap-1">
@@ -319,8 +319,8 @@ export function MenuMockup({
               className={cx(
                 "flex-1 rounded-[3px] px-1 py-1.5 text-center text-[8px] font-medium",
                 index === 2
-                  ? "bg-[#0067b8] text-white"
-                  : "bg-white text-[#4b4b4b] ring-1 ring-black/10",
+                  ? "bg-festival-red text-festival-cream"
+                  : "bg-festival-cream text-festival-ink-soft ring-1 ring-festival-line",
               )}
             >
               {option}
@@ -329,7 +329,7 @@ export function MenuMockup({
         </div>
       </div>
 
-      <ul className="divide-y divide-black/5 rounded-lg ring-1 ring-black/5">
+      <ul className="divide-y divide-festival-line/70 rounded-lg ring-1 ring-festival-line">
         {d.menuItems.map((item, index) => (
           <li key={item.name} className="flex items-center gap-2 px-2 py-2">
             <span
@@ -348,8 +348,8 @@ export function MenuMockup({
               className={cx(
                 "rounded px-1.5 py-0.5 text-[8px] font-semibold",
                 item.available
-                  ? "bg-[#e8f1fa] text-[#0067b8]"
-                  : "bg-[#fde7e9] text-[#a4262c]",
+                  ? "bg-[#dfeaea] text-festival-teal"
+                  : "bg-[#f4e2dd] text-[#8a3a3a]",
               )}
             >
               {item.available ? d.available : d.soldOut}
@@ -358,18 +358,18 @@ export function MenuMockup({
         ))}
       </ul>
 
-      <div className="flex items-center gap-3 rounded-lg bg-[#faf9f8] p-2.5 ring-1 ring-black/5">
+      <div className="flex items-center gap-3 rounded-lg bg-festival-wash p-2.5 ring-1 ring-festival-line">
         {qr ? (
           <div
-            className="h-14 w-14 shrink-0 rounded bg-white p-1 ring-1 ring-black/5 [&_svg]:h-full [&_svg]:w-full"
+            className="h-14 w-14 shrink-0 rounded bg-festival-cream p-1 ring-1 ring-festival-line [&_svg]:h-full [&_svg]:w-full"
             dangerouslySetInnerHTML={{ __html: qr }}
           />
         ) : (
-          <div className="h-14 w-14 shrink-0 rounded bg-white ring-1 ring-black/10" />
+          <div className="h-14 w-14 shrink-0 rounded bg-festival-cream ring-1 ring-festival-line" />
         )}
         <div className="min-w-0">
           <p className="text-[9px] font-semibold">{d.publicMenu}</p>
-          <p className="truncate text-[8px] text-[#605e5c]">/s/takoyaki</p>
+          <p className="truncate text-[8px] text-festival-muted">/s/takoyaki</p>
         </div>
       </div>
     </div>
@@ -383,20 +383,20 @@ export function PhoneMockup({ d, className }: { d: Demo; className?: string }) {
     <div
       aria-hidden
       className={cx(
-        "relative w-[236px] rounded-[2.4rem] bg-[#1a1a1a] p-[7px] shadow-[0_40px_80px_-30px_rgba(15,40,70,0.5)]",
+        "relative w-[236px] rounded-[2.4rem] bg-festival-ink p-[7px] shadow-[0_40px_80px_-30px_rgba(64,32,0,0.5)]",
         className,
       )}
     >
-      <div className="relative overflow-hidden rounded-[1.9rem] bg-white">
-        <div className="absolute top-1.5 left-1/2 h-4 w-20 -translate-x-1/2 rounded-full bg-[#1a1a1a]" />
-        <div className="flex h-24 items-end bg-gradient-to-br from-[#f2b880] via-[#e08a4a] to-[#a33d12] p-3 pt-8">
-          <span className="text-[13px] font-bold text-white drop-shadow-sm">{d.stall}</span>
+      <div className="relative overflow-hidden rounded-[1.9rem] bg-festival-cream">
+        <div className="absolute top-1.5 left-1/2 h-4 w-20 -translate-x-1/2 rounded-full bg-festival-ink" />
+        <div className="flex h-24 items-end bg-gradient-to-br from-[#e6b45a] via-[#c4653f] to-festival-red p-3 pt-8">
+          <span className="text-[13px] font-bold text-festival-cream drop-shadow-sm">{d.stall}</span>
         </div>
         <div className="p-3">
-          <div className="rounded-md bg-[#0067b8] px-2 py-1.5 text-center text-[9px] font-semibold text-white">
+          <div className="rounded-md bg-festival-gold px-2 py-1.5 text-center text-[9px] font-semibold text-festival-ink">
             {d.saleBanner}
           </div>
-          <ul className="mt-2 divide-y divide-black/5">
+          <ul className="mt-2 divide-y divide-festival-line/70">
             {d.menuItems.slice(0, 2).map((item) => (
               <li key={item.name} className="flex items-baseline justify-between gap-2 py-1.5">
                 <span className="text-[9px] font-medium">{item.name}</span>
@@ -404,7 +404,7 @@ export function PhoneMockup({ d, className }: { d: Demo; className?: string }) {
               </li>
             ))}
           </ul>
-          <p className="mt-2 border-t border-black/5 pt-2 text-center text-[8px] leading-snug text-[#8a8886]">
+          <p className="mt-2 border-t border-festival-line pt-2 text-center text-[8px] leading-snug text-festival-muted">
             {d.orderNote}
           </p>
         </div>
