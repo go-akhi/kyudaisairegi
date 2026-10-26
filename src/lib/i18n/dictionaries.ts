@@ -55,7 +55,7 @@ const en = {
       title: "Serve the queue. Lose the paper tickets.",
       subtitle:
         "The counter and the kitchen see the same order, live. Still cash only, with orders called by number — no app to install, no special hardware.",
-      primary: "See a stall menu",
+      primary: "See all participating stalls",
       secondary: "Staff sign in",
       note: "Stall accounts are issued by the festival organisers.",
       badges: ["Cash only", "No install", "English / 日本語"],
@@ -487,7 +487,7 @@ const ja: Dict = {
       title: "行列はさばく。伝票はなくす。",
       subtitle:
         "レジと厨房が同じ注文をリアルタイムに共有。現金のまま、番号でお客様をお呼びします。アプリのインストールも、専用の機器もいりません。",
-      primary: "屋台のメニューを見る",
+      primary: "参加屋台をすべて見る",
       secondary: "スタッフログイン",
       note: "屋台アカウントは運営が発行します。",
       badges: ["現金のみ", "インストール不要", "日本語 / English"],

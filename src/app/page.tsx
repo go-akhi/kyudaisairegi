@@ -97,7 +97,6 @@ export default async function LandingPage() {
   const landing = t.landing;
   const stalls = await listStalls();
   const demoStall = stalls.find((stall) => stall.isOpen) ?? stalls[0] ?? null;
-  const demoHref = demoStall ? `/s/${demoStall.slug}` : "/stalls";
 
   const appUrl = process.env.APP_URL ?? "http://localhost:3000";
   const qr = demoStall
@@ -208,7 +207,7 @@ export default async function LandingPage() {
               </p>
 
               <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-                <Link href={demoHref} className={blueButton}>
+                <Link href="/stalls" className={blueButton}>
                   {landing.hero.primary}
                 </Link>
                 <Link href="/login" className={linkButton}>
