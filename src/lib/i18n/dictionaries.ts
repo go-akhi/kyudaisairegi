@@ -38,6 +38,8 @@ const en = {
     subtitle: "Browse the menu. Order and pay in cash at the counter.",
     noStalls: "No stalls yet.",
     staff: "Staff?",
+    openNow: "Open now",
+    seeMenu: "See menu",
   },
 
   landing: {
@@ -470,6 +472,8 @@ const ja: Dict = {
     subtitle: "メニューをご覧いただけます。ご注文とお会計は各屋台のレジでお願いします。",
     noStalls: "まだ屋台が登録されていません。",
     staff: "スタッフの方はこちら",
+    openNow: "営業中",
+    seeMenu: "メニューを見る",
   },
 
   landing: {
