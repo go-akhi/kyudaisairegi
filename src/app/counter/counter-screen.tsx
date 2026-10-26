@@ -4,8 +4,8 @@ import { useMemo, useState, useTransition } from "react";
 import useSWR from "swr";
 import type { MenuCategory, MenuItem } from "@/lib/menu-types";
 import type { CartLine } from "@/lib/actions/orders";
-import { cancelOrder, completeOrder, createAddOn, createOrder } from "@/lib/actions/orders";
-import type { QueueOrder, QueueResponse } from "@/lib/queue-types";
+import { cancelOrder, completeItem, createAddOn, createOrder } from "@/lib/actions/orders";
+import type { QueueItem, QueueOrder, QueueResponse } from "@/lib/queue-types";
 import { elapsedLabel, elapsedSeconds, unitSalePrice, yen } from "@/lib/format";
 import { fill, type Dict, type Locale } from "@/lib/i18n/dictionaries";
 import { useNow } from "@/lib/use-now";
@@ -60,7 +60,17 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
   }, [sections]);
 
   const lines = Object.entries(cart);
-  const ready = (data?.orders ?? []).filter((order) => order.status === "ready");
+  const ready = (data?.orders ?? [])
+    .flatMap((order) =>
+      order.items
+        .filter((item) => item.status === "ready")
+        .map((item) => ({ order, item })),
+    )
+    .sort(
+      (a, b) =>
+        new Date(a.item.readyAt ?? a.order.createdAt).getTime() -
+        new Date(b.item.readyAt ?? b.order.createdAt).getTime(),
+    );
 
   const unitPrice = (line: CartLine) => {
     const item = itemById.get(line.itemId);
@@ -167,9 +177,9 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
     });
   }
 
-  function handOver(orderId: string) {
-    setBusyId(orderId);
-    void completeOrder(orderId).finally(() => {
+  function handOver(itemId: string) {
+    setBusyId(itemId);
+    void completeItem(itemId).finally(() => {
       setBusyId(null);
       mutate();
     });
@@ -190,7 +200,7 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-4">
       <ReadyRail
-        orders={ready}
+        tickets={ready}
         busyId={busyId}
         onHandOver={handOver}
         onCancel={cancel}
@@ -634,22 +644,21 @@ function CashCalculator({
 }
 
 function ReadyRail({
-  orders,
+  tickets,
   busyId,
   onHandOver,
   onCancel,
   locale,
   t,
 }: {
-  orders: QueueOrder[];
+  tickets: { order: QueueOrder; item: QueueItem }[];
   busyId: string | null;
-  onHandOver: (id: string) => void;
-  onCancel: (id: string, number: number) => void;
+  onHandOver: (itemId: string) => void;
+  onCancel: (orderId: string, number: number) => void;
   locale: Locale;
   t: Dict;
 }) {
   const now = useNow(1000);
-  const itemSeparator = locale === "ja" ? "、" : ", ";
   const optionSeparator = locale === "ja" ? "・" : ", ";
 
   // Sticks directly under the staff top bar: 69px tall, or 77px when its nav
@@ -664,40 +673,38 @@ function ReadyRail({
           {t.counter.readyTab}
         </h2>
         <span className="rounded-md bg-[#e3ecec] px-1.5 py-0.5 text-xs font-semibold text-[#15505e] tabular-nums">
-          {orders.length}
+          {tickets.length}
         </span>
-        {orders.length > 0 ? (
+        {tickets.length > 0 ? (
           <span className="ml-auto text-xs text-[#a08a72]">
-            {fill(t.queue.readyCount, { n: orders.length })}
+            {fill(t.queue.readyCount, { n: tickets.length })}
           </span>
         ) : null}
       </div>
 
-      {orders.length === 0 ? (
+      {tickets.length === 0 ? (
         <p className="rounded-lg border border-dashed border-[#d9cbb4] px-3 py-2 text-sm text-[#856f58]">
           {t.counter.emptyReady}
         </p>
       ) : (
         <ul className="flex gap-2 overflow-x-auto pb-1">
-          {orders.map((order) => {
-            const waited = elapsedSeconds(order.readyAt ?? order.createdAt, now);
+          {tickets.map(({ order, item }) => {
+            const waited = elapsedSeconds(item.readyAt ?? order.createdAt, now);
             const slow = waited >= 300;
             const late = waited >= 600;
 
-            const summary = order.items
-              .map((item) => {
-                const options = item.options.map((option) => option.name).join(optionSeparator);
-                const suffix = options
-                  ? locale === "ja"
-                    ? `（${options}）`
-                    : ` (${options})`
-                  : "";
-                return `${item.qty}× ${item.name}${suffix}`;
-              })
-              .join(itemSeparator);
+            const options = item.options
+              .map((option) => option.name)
+              .join(optionSeparator);
+            const suffix = options
+              ? locale === "ja"
+                ? `（${options}）`
+                : ` (${options})`
+              : "";
+            const summary = `${item.qty}× ${item.name}${suffix}`;
 
             return (
-              <li key={order.id} className="w-[270px] shrink-0">
+              <li key={item.id} className="w-[270px] shrink-0">
                 <Card className="flex h-full flex-col p-2.5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex min-w-0 items-center gap-1.5">
@@ -707,15 +714,15 @@ function ReadyRail({
                         </span>
                         {order.customerName || t.common.noName}
                       </p>
-                      {order.parts > 1 ? (
+                      {item.parts > 1 ? (
                         <span
                           aria-label={fill(t.queue.partOf, {
-                            part: order.part,
-                            parts: order.parts,
+                            part: item.part,
+                            parts: item.parts,
                           })}
                           className="shrink-0 rounded bg-[#fff3c9] px-1 py-0.5 text-[10px] font-semibold text-[#6b4a00] tabular-nums"
                         >
-                          {order.part}/{order.parts}
+                          {item.part}/{item.parts}
                         </span>
                       ) : null}
                     </div>
@@ -724,7 +731,7 @@ function ReadyRail({
                         late
                           ? "bg-[#b3261e] text-[#fffef6]"
                           : slow
-                            ? "bg-[#fff9e6]0 text-[#fffef6]"
+                            ? "bg-[#b07a1a] text-[#fffef6]"
                             : "bg-[#f4ecdd] text-[#6b5544]"
                       }`}
                     >
@@ -746,8 +753,8 @@ function ReadyRail({
                       size="sm"
                       variant="ok"
                       className="flex-1"
-                      disabled={busyId === order.id}
-                      onClick={() => onHandOver(order.id)}
+                      disabled={busyId === item.id}
+                      onClick={() => onHandOver(item.id)}
                     >
                       {t.counter.handedOver}
                     </Button>

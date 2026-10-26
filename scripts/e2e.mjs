@@ -99,53 +99,50 @@ try {
   const back = await device("back", "E2E Back");
   check("back lands on the queue", back.page.url().endsWith("/queue"));
 
-  const ticket = back.page.locator("li", { hasText: "#" + orderNumber }).first();
-  await ticket.waitFor({ timeout: 8000 });
-  check("back sees the ticket", await ticket.isVisible());
+  const firstTicket = back.page.locator("li", { hasText: "#" + orderNumber }).first();
+  await firstTicket.waitFor({ timeout: 8000 });
+  check("back sees the first item ticket", await firstTicket.isVisible());
   check(
     "ticket carries the note",
     (await back.page.getByText("no mayo").count()) > 0,
   );
+
+  const readyButtons = back.page.getByRole("button", { name: "Ready" });
   check(
-    "kitchen shows the ticket as part 1 of 2",
-    (await ticket.innerText()).includes("1/2"),
+    "kitchen itemises the order into four tickets",
+    (await readyButtons.count()) === 4,
   );
   check(
-    "kitchen sees the second part as 2/2",
-    (await back.page.getByText("2/2").count()) > 0,
+    "kitchen tickets keep the group context",
+    (await back.page.getByText("1/4").count()) === 1 &&
+      (await back.page.getByText("4/4").count()) === 1,
   );
 
-  await ticket.getByRole("button", { name: "Ready" }).click();
-  const addonTicket = back.page
-    .locator("li", { hasText: "#" + orderNumber })
-    .filter({ hasText: "2/2" })
-    .first();
-  await addonTicket.getByRole("button", { name: "Ready" }).click();
+  while ((await readyButtons.count()) > 0) {
+    await readyButtons.first().click();
+    await back.page.waitForTimeout(700);
+  }
   await back.page.waitForSelector("text=Waiting at the counter", { timeout: 5000 });
   await back.page.waitForTimeout(3500); // let the front's poll catch up
 
   /* --------------------------------------------------------------- pick up */
-  const readyCard = front.page.locator("li", { hasText: "#" + orderNumber }).first();
-  await readyCard.waitFor({ timeout: 8000 });
-  check("front sees the order in the ready rail", await readyCard.isVisible());
+  const railCards = front.page.locator("section[aria-label] li", {
+    hasText: "#" + orderNumber,
+  });
+  await railCards.first().waitFor({ timeout: 8000 });
+  check("front sees four ready item tickets", (await railCards.count()) === 4);
   check(
-    "parent rail card is marked 1/2",
-    (await readyCard.innerText()).includes("1/2"),
+    "ready tickets keep the group context",
+    (await front.page.locator("section[aria-label]").getByText("1/4").count()) > 0,
   );
 
-  const addonCard = front.page
-    .locator("li", { hasText: "#" + orderNumber })
-    .filter({ hasText: "2/2" })
-    .first();
-  check("front sees part 2/2 in the rail", await addonCard.isVisible());
-
-  await readyCard.getByRole("button", { name: "Handed over" }).click();
-  await addonCard.getByRole("button", { name: "Handed over" }).click();
+  const handovers = front.page.getByRole("button", { name: "Handed over" });
+  while ((await handovers.count()) > 0) {
+    await handovers.first().click();
+    await front.page.waitForTimeout(600);
+  }
   await front.page.waitForTimeout(1200);
-  check(
-    "finished order leaves the ready rail",
-    (await front.page.getByText("#" + orderNumber).count()) === 0,
-  );
+  check("every item leaves the ready rail", (await railCards.count()) === 0);
 
   /* --------------------------------------------------------------- borders */
   const anon = await browser.newContext();

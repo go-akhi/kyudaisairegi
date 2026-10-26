@@ -142,7 +142,7 @@ export async function createOrder(input: {
         })
         .returning({ id: orders.id, number: orders.number });
 
-      for (const line of priced) {
+      for (const [index, line] of priced.entries()) {
         const [orderItem] = await tx
           .insert(orderItems)
           .values({
@@ -151,6 +151,7 @@ export async function createOrder(input: {
             nameSnapshot: line.item.name,
             unitPriceYen: line.unitPriceYen,
             qty: line.qty,
+            lineNo: index + 1,
           })
           .returning({ id: orderItems.id });
 
@@ -263,7 +264,7 @@ export async function createAddOn(
           addonNo: orders.addonNo,
         });
 
-      for (const line of priced) {
+      for (const [index, line] of priced.entries()) {
         const [orderItem] = await tx
           .insert(orderItems)
           .values({
@@ -272,6 +273,7 @@ export async function createAddOn(
             nameSnapshot: line.item.name,
             unitPriceYen: line.unitPriceYen,
             qty: line.qty,
+            lineNo: index + 1,
           })
           .returning({ id: orderItems.id });
 
@@ -314,58 +316,108 @@ export async function createAddOn(
 
 /* ------------------------------------------------------------- transitions */
 
-export async function markReady(orderId: string): Promise<{ ok: true } | { error: string }> {
-  const account = await requireStall();
-  const device = await getDevice();
-
-  const updated = await db
-    .update(orders)
-    .set({ status: "ready", readyAt: new Date() })
-    .where(
-      and(
-        eq(orders.id, orderId),
-        eq(orders.stallId, account.stallId),
-        eq(orders.status, "placed"),
-      ),
-    )
-    .returning({ id: orders.id });
-
-  if (updated.length === 0) return { error: "This order has already moved" };
-
-  await logEvent({
-    stallId: account.stallId,
-    orderId,
-    type: "order.ready",
-    deviceLabel: device.label,
-  });
-  return { ok: true };
-}
-
-export async function completeOrder(
-  orderId: string,
+export async function markItemReady(
+  itemId: string,
 ): Promise<{ ok: true } | { error: string }> {
   const account = await requireStall();
   const device = await getDevice();
 
-  const updated = await db
-    .update(orders)
-    .set({ status: "completed", completedAt: new Date() })
+  const [item] = await db
+    .select({ orderId: orderItems.orderId })
+    .from(orderItems)
+    .innerJoin(orders, eq(orderItems.orderId, orders.id))
     .where(
       and(
-        eq(orders.id, orderId),
+        eq(orderItems.id, itemId),
         eq(orders.stallId, account.stallId),
-        eq(orders.status, "ready"),
+        inArray(orders.status, ["placed", "ready"]),
       ),
     )
-    .returning({ id: orders.id });
+    .limit(1);
 
-  if (updated.length === 0) return { error: "This order has already moved" };
+  if (!item) return { error: "This order has already moved" };
+
+  const updated = await db
+    .update(orderItems)
+    .set({ status: "ready", readyAt: new Date() })
+    .where(and(eq(orderItems.id, itemId), eq(orderItems.status, "placed")))
+    .returning({ id: orderItems.id });
+
+  if (updated.length === 0) return { error: "This item has already moved" };
+
+  await db
+    .update(orders)
+    .set({ status: "ready", readyAt: sql`coalesce(${orders.readyAt}, now())` })
+    .where(and(eq(orders.id, item.orderId), eq(orders.status, "placed")));
 
   await logEvent({
     stallId: account.stallId,
-    orderId,
-    type: "order.completed",
+    orderId: item.orderId,
+    type: "item.ready",
     deviceLabel: device.label,
+    payload: { itemId },
+  });
+  return { ok: true };
+}
+
+export async function completeItem(
+  itemId: string,
+): Promise<{ ok: true } | { error: string }> {
+  const account = await requireStall();
+  const device = await getDevice();
+
+  const [item] = await db
+    .select({ orderId: orderItems.orderId })
+    .from(orderItems)
+    .innerJoin(orders, eq(orderItems.orderId, orders.id))
+    .where(
+      and(
+        eq(orderItems.id, itemId),
+        eq(orders.stallId, account.stallId),
+        inArray(orders.status, ["placed", "ready"]),
+      ),
+    )
+    .limit(1);
+
+  if (!item) return { error: "This order has already moved" };
+
+  const now = new Date();
+  const updated = await db
+    .update(orderItems)
+    .set({ status: "completed", completedAt: now })
+    .where(and(eq(orderItems.id, itemId), eq(orderItems.status, "ready")))
+    .returning({ id: orderItems.id });
+
+  if (updated.length === 0) return { error: "This item has already moved" };
+
+  const [remaining] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(orderItems)
+    .where(
+      and(
+        eq(orderItems.orderId, item.orderId),
+        inArray(orderItems.status, ["placed", "ready"]),
+      ),
+    );
+
+  if ((remaining?.count ?? 0) === 0) {
+    await db
+      .update(orders)
+      .set({ status: "completed", completedAt: now })
+      .where(
+        and(
+          eq(orders.id, item.orderId),
+          inArray(orders.status, ["placed", "ready"]),
+        ),
+      );
+  }
+
+  await logEvent({
+    stallId: account.stallId,
+    orderId: item.orderId,
+    type: "item.completed",
+    deviceLabel: device.label,
+    payload: { itemId },
   });
   return { ok: true };
 }
@@ -394,6 +446,16 @@ export async function cancelOrder(
     .returning({ id: orders.id });
 
   if (updated.length === 0) return { error: "This order has already moved" };
+
+  await db
+    .update(orderItems)
+    .set({ status: "cancelled" })
+    .where(
+      and(
+        eq(orderItems.orderId, orderId),
+        inArray(orderItems.status, ["placed", "ready"]),
+      ),
+    );
 
   await logEvent({
     stallId: account.stallId,

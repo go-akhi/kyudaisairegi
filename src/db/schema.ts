@@ -169,8 +169,18 @@ export const orderItems = pgTable(
     nameSnapshot: text("name_snapshot").notNull(),
     unitPriceYen: integer("unit_price_yen").notNull(),
     qty: integer("qty").notNull().default(1),
+    /** 1-based line order, so the 1/n markers follow the cart */
+    lineNo: integer("line_no").notNull().default(0),
+    /** Item-level prep: placed -> ready -> completed, or cancelled with its order */
+    status: text("status").notNull().default("placed"),
+    readyAt: timestamp("ready_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [index("order_items_order_idx").on(t.orderId)],
+  (t) => [
+    index("order_items_order_idx").on(t.orderId),
+    index("order_items_status_idx").on(t.status),
+  ],
 );
 
 export const orderItemOptions = pgTable(

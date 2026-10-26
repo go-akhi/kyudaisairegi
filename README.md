@@ -112,12 +112,18 @@ docker compose exec -T db pg_dump -U kyudaisai kyudaisai | gzip > backup-$(date 
 - **Polling, not websockets.** 3 seconds, one endpoint, no extra process.
 - **Order numbers are per stall, per JST day**, allocated with an atomic upsert —
   two tablets cannot produce the same number.
+- **Preparation is item-level.** `order_items.status` moves `placed → ready →
+  completed` independently, with one kitchen card and one handover card per item.
+  A lemonade can go out while the takoyaki is still on the griddle.
+- **Every ticket carries the group context.** Positions are computed across the
+  customer's whole group (order + add-ons), so cards read `2/5`, `3/5`… even after
+  earlier items are finished. The numbers never shift mid-service.
 - **Add-ons keep the customer's number.** A second batch is its own order row with
-  `addon_no` and `parent_order_id`, so the kitchen gets a separate ticket. Every
-  ticket in the group is marked `1/2`, `2/2`… on the kitchen and handover screens.
-  It inherits the parent's frozen discount and does not consume a new number.
-- **Status is a three-state machine** (`placed → ready → completed`, plus
-  `cancelled`) with guarded updates, so a double-tap cannot skip a step.
+  `addon_no` and `parent_order_id`; it inherits the parent's frozen discount and
+  does not consume a new number.
+- **Orders keep a summary status** (`placed → ready → completed`, plus
+  `cancelled`) that follows their items and completes when the last item is handed
+  over; guarded updates mean a double-tap cannot skip a step.
 
 ## Not built (deliberately)
 
