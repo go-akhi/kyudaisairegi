@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray, or } from "drizzle-orm";
 import { db } from "@/db";
 import { orderItemOptions, orderItems, orders } from "@/db/schema";
 import { getAccount } from "@/lib/auth";
@@ -70,17 +70,38 @@ export async function GET() {
     itemsByOrder.set(item.orderId, list);
   }
 
-  const parentsWithAddons = new Set(
-    orderRows.map((order) => order.parentOrderId).filter(Boolean),
-  );
+  const roots = [
+    ...new Set(orderRows.map((order) => order.parentOrderId ?? order.id)),
+  ];
+
+  // Whole groups, including parts already handed over, so 1/2 never becomes
+  // 1/1 halfway through service.
+  const groupRows = await db
+    .select({
+      id: orders.id,
+      parentOrderId: orders.parentOrderId,
+      addonNo: orders.addonNo,
+    })
+    .from(orders)
+    .where(
+      and(
+        eq(orders.stallId, account.stallId),
+        or(inArray(orders.id, roots), inArray(orders.parentOrderId, roots)),
+      ),
+    );
+
+  const partsByRoot = new Map<string, number>();
+  for (const row of groupRows) {
+    const root = row.parentOrderId ?? row.id;
+    partsByRoot.set(root, Math.max(partsByRoot.get(root) ?? 1, row.addonNo + 1));
+  }
 
   const payload: QueueResponse = {
     orders: orderRows.map((order) => ({
       id: order.id,
       number: order.number,
-      addonNo: order.addonNo,
-      // Only open add-ons mean "more is still coming".
-      hasAddons: parentsWithAddons.has(order.id),
+      part: order.addonNo + 1,
+      parts: partsByRoot.get(order.parentOrderId ?? order.id) ?? 1,
       status: order.status as "placed" | "ready",
       customerName: order.customerName,
       note: order.note,

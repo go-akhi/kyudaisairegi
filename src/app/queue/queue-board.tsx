@@ -75,20 +75,21 @@ export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
                       <div>
                         <p className="flex flex-wrap items-baseline gap-2 text-4xl font-bold leading-none">
                           #{order.number}
-                          {order.addonNo > 0 ? (
-                            <span className="rounded-md bg-amber-100 px-2 py-1 text-sm font-semibold text-amber-900">
-                              {fill(t.queue.addon, { n: order.addonNo })}
+                          {order.parts > 1 ? (
+                            <span
+                              aria-label={fill(t.queue.partOf, {
+                                part: order.part,
+                                parts: order.parts,
+                              })}
+                              className="rounded-md bg-amber-100 px-2 py-1 text-sm font-semibold text-amber-900 tabular-nums"
+                            >
+                              {order.part}/{order.parts}
                             </span>
                           ) : null}
                         </p>
                         <p className="mt-1 text-sm text-stone-500">
                           {order.customerName || t.common.noName}
                         </p>
-                        {order.hasAddons ? (
-                          <p className="mt-1 text-xs font-semibold text-amber-800">
-                            {t.queue.moreComing}
-                          </p>
-                        ) : null}
                       </div>
                       <span
                         className={`rounded-md px-2 py-1 text-sm font-semibold tabular-nums ${
@@ -175,9 +176,9 @@ export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
                   >
                     <span className="text-xl font-bold">
                       #{order.number}
-                      {order.addonNo > 0 ? (
-                        <span className="ml-1 align-middle text-xs font-semibold text-amber-800">
-                          +{order.addonNo}
+                      {order.parts > 1 ? (
+                        <span className="ml-1 align-middle text-xs font-semibold text-amber-800 tabular-nums">
+                          {order.part}/{order.parts}
                         </span>
                       ) : null}
                     </span>

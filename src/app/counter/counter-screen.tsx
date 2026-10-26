@@ -514,9 +514,15 @@ function ReadyRail({
                         </span>
                         {order.customerName || t.common.noName}
                       </p>
-                      {order.addonNo > 0 ? (
-                        <span className="shrink-0 rounded bg-amber-100 px-1 py-0.5 text-[10px] font-semibold text-amber-900">
-                          {fill(t.queue.addon, { n: order.addonNo })}
+                      {order.parts > 1 ? (
+                        <span
+                          aria-label={fill(t.queue.partOf, {
+                            part: order.part,
+                            parts: order.parts,
+                          })}
+                          className="shrink-0 rounded bg-amber-100 px-1 py-0.5 text-[10px] font-semibold text-amber-900 tabular-nums"
+                        >
+                          {order.part}/{order.parts}
                         </span>
                       ) : null}
                     </div>
@@ -536,11 +542,6 @@ function ReadyRail({
                   <p className="mt-1 truncate text-xs text-stone-600" title={summary}>
                     {summary}
                   </p>
-                  {order.hasAddons ? (
-                    <p className="mt-1 inline-flex w-fit items-center rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-900">
-                      {t.queue.moreComing}
-                    </p>
-                  ) : null}
                   {order.note ? (
                     <p className="mt-0.5 truncate text-[11px] font-medium text-amber-700">
                       {order.note}

@@ -7,10 +7,9 @@ export type QueueItem = {
 export type QueueOrder = {
   id: string;
   number: number;
-  /** 0 = original ticket, 1.. = linked add-on sharing the parent's number */
-  addonNo: number;
-  /** Another open add-on exists for this ticket */
-  hasAddons: boolean;
+  /** 1-based position within a multi-part ticket (1/2, 2/2…) */
+  part: number;
+  parts: number;
   status: "placed" | "ready";
   customerName: string;
   note: string;

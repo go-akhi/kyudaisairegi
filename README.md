@@ -110,9 +110,9 @@ docker compose exec -T db pg_dump -U kyudaisai kyudaisai | gzip > backup-$(date 
 - **Order numbers are per stall, per JST day**, allocated with an atomic upsert —
   two tablets cannot produce the same number.
 - **Add-ons keep the customer's number.** A second batch is its own order row with
-  `addon_no` and `parent_order_id`, so the kitchen gets a separate ticket while the
-  original shows a "more coming" marker. It inherits the parent's frozen discount
-  and does not consume a new number.
+  `addon_no` and `parent_order_id`, so the kitchen gets a separate ticket. Every
+  ticket in the group is marked `1/2`, `2/2`… on the kitchen and handover screens.
+  It inherits the parent's frozen discount and does not consume a new number.
 - **Status is a three-state machine** (`placed → ready → completed`, plus
   `cancelled`) with guarded updates, so a double-tap cannot skip a step.
 

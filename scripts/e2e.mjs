@@ -90,14 +90,18 @@ try {
     (await back.page.getByText("no mayo").count()) > 0,
   );
   check(
-    "kitchen sees the linked add-on ticket",
-    (await back.page.getByText("Add-on 1").count()) > 0,
+    "kitchen shows the ticket as part 1 of 2",
+    (await ticket.innerText()).includes("1/2"),
+  );
+  check(
+    "kitchen sees the second part as 2/2",
+    (await back.page.getByText("2/2").count()) > 0,
   );
 
   await ticket.getByRole("button", { name: "Ready" }).click();
   const addonTicket = back.page
     .locator("li", { hasText: "#" + orderNumber })
-    .filter({ hasText: "Add-on 1" })
+    .filter({ hasText: "2/2" })
     .first();
   await addonTicket.getByRole("button", { name: "Ready" }).click();
   await back.page.waitForSelector("text=Waiting at the counter", { timeout: 5000 });
@@ -108,15 +112,15 @@ try {
   await readyCard.waitFor({ timeout: 8000 });
   check("front sees the order in the ready rail", await readyCard.isVisible());
   check(
-    "parent ticket warns that the add-on is still coming",
-    (await readyCard.innerText()).includes("More coming"),
+    "parent rail card is marked 1/2",
+    (await readyCard.innerText()).includes("1/2"),
   );
 
   const addonCard = front.page
     .locator("li", { hasText: "#" + orderNumber })
-    .filter({ hasText: "Add-on 1" })
+    .filter({ hasText: "2/2" })
     .first();
-  check("front sees the add-on in the rail", await addonCard.isVisible());
+  check("front sees part 2/2 in the rail", await addonCard.isVisible());
 
   await readyCard.getByRole("button", { name: "Handed over" }).click();
   await addonCard.getByRole("button", { name: "Handed over" }).click();
