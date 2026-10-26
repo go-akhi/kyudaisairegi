@@ -136,7 +136,7 @@ export default async function ManagePage({
         {/* -------------------------------------------------------- settings */}
         <Card className="p-4">
           <h2 className="mb-3 font-semibold">{t.manage.details}</h2>
-          <form action={updateStall} className="space-y-3" encType="multipart/form-data">
+          <form action={updateStall} className="space-y-3">
             <Field label={t.manage.stallName}>
               <input name="displayName" defaultValue={stall.displayName} className={field} required />
             </Field>
@@ -312,7 +312,7 @@ function ItemForm({
   t: Dict;
 }) {
   return (
-    <form action={saveItem} className="space-y-3" encType="multipart/form-data">
+    <form action={saveItem} className="space-y-3">
       {item ? <input type="hidden" name="itemId" value={item.id} /> : null}
 
       <div className="grid gap-3 sm:grid-cols-[1fr_140px]">
