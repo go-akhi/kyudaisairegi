@@ -61,8 +61,25 @@ try {
     placeLabel.includes("¥1,080"),
   );
 
+  // Cash calculator: ¥1,100 for a ¥1,080 order leaves ¥20.
+  const cashCalc = front.page.locator("#cash-calc");
+  await cashCalc.getByRole("button", { name: "¥1,000" }).click();
+  await cashCalc.getByRole("button", { name: "¥100" }).click();
+  await cashCalc.getByRole("button", { name: "Calculate change" }).click();
+  check(
+    "cash calculator works out the change",
+    (await cashCalc.innerText()).includes("¥20"),
+  );
+
   await placeButton.click();
   await front.page.waitForSelector("text=Order placed", { timeout: 5000 });
+  check("calculator collapses after the order", !(await cashCalc.isVisible()));
+
+  await front.page.getByRole("button", { name: "Change calculator" }).click();
+  check(
+    "calculator state is cleared after the order",
+    (await cashCalc.locator("[data-cash-received]").innerText()) === "¥0",
+  );
   const numberText = await front.page.locator("text=/^#\\d+$/").first().innerText();
   const orderNumber = Number(numberText.replace("#", ""));
   check(`order placed with a number (${numberText})`, orderNumber > 0);

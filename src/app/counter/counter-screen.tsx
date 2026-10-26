@@ -32,6 +32,9 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [cashOpen, setCashOpen] = useState(true);
+  const [received, setReceived] = useState(0);
+  const [calculated, setCalculated] = useState<{ received: number; total: number } | null>(null);
   const [pending, startTransition] = useTransition();
 
   const { data, mutate } = useSWR<QueueResponse>("/api/queue", fetcher, {
@@ -99,6 +102,12 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
     });
   }
 
+  function resetCash() {
+    setCashOpen(false);
+    setReceived(0);
+    setCalculated(null);
+  }
+
   function submit() {
     setError("");
     setNotice("");
@@ -119,6 +128,7 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
       setName("");
       setNote("");
       setExpanded(null);
+      resetCash();
       mutate();
     });
   }
@@ -152,6 +162,7 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
       setCart({});
       setNote("");
       setExpanded(null);
+      resetCash();
       mutate();
     });
   }
@@ -279,7 +290,28 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
           ))}
         </div>
 
-        <aside className="lg:sticky lg:top-4">
+        {/* Sticky only when collapsed: an open calculator plus the order card is
+            taller than a tablet screen, and a sticky aside would hide the
+            Place order button. */}
+        <aside className={cashOpen ? "" : "lg:sticky lg:top-4"}>
+          <CashCalculator
+            open={cashOpen}
+            onToggle={() => setCashOpen((open) => !open)}
+            total={total}
+            received={received}
+            calculated={calculated}
+            onAdd={(amount) => {
+              setReceived((value) => value + amount);
+              setCalculated(null);
+            }}
+            onClear={() => {
+              setReceived(0);
+              setCalculated(null);
+            }}
+            onCalculate={() => setCalculated({ received, total })}
+            t={t}
+          />
+
           <Card className="p-4">
             {placed ? (
               <div className="mb-4 rounded-xl bg-green-700 px-4 py-4 text-white">
@@ -437,6 +469,165 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
         </aside>
       </div>
     </div>
+  );
+}
+
+const NOTES = [10000, 5000, 2000, 1000];
+const COINS = [500, 100, 50, 10, 5, 1];
+
+function CashCalculator({
+  open,
+  onToggle,
+  total,
+  received,
+  calculated,
+  onAdd,
+  onClear,
+  onCalculate,
+  t,
+}: {
+  open: boolean;
+  onToggle: () => void;
+  total: number;
+  received: number;
+  calculated: { received: number; total: number } | null;
+  onAdd: (amount: number) => void;
+  onClear: () => void;
+  onCalculate: () => void;
+  t: Dict;
+}) {
+  // The cart can change after calculating; only trust a result for the
+  // exact total and amount it was computed from.
+  const result =
+    calculated && calculated.received === received && calculated.total === total
+      ? received - total
+      : null;
+
+  return (
+    <Card className="mb-3 overflow-hidden">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-controls="cash-calc"
+        className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left"
+      >
+        <span className="font-semibold">{t.counter.cashCalc}</span>
+        <span className="flex items-center gap-2">
+          <span className="text-xs text-stone-400">
+            {t.counter.total}{" "}
+            <span className="font-semibold text-stone-600 tabular-nums">
+              {yen(total)}
+            </span>
+          </span>
+          <svg
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden
+            className={`h-4 w-4 shrink-0 text-stone-400 transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+          >
+            <path
+              d="m4 6 4 4 4-4"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+      </button>
+
+      <div
+        id="cash-calc"
+        hidden={!open}
+        className="space-y-3 border-t border-stone-100 px-3 pt-2.5 pb-3"
+      >
+        <p className="text-xs text-stone-500">{t.counter.cashHint}</p>
+
+        <div>
+          <p className="text-[10px] font-semibold tracking-widest text-stone-400 uppercase">
+            {t.counter.cashNotes}
+          </p>
+          <div className="mt-1 grid grid-cols-4 gap-1.5">
+            {NOTES.map((note) => (
+              <button
+                key={note}
+                type="button"
+                onClick={() => onAdd(note)}
+                className="h-10 rounded-lg bg-stone-100 text-sm font-semibold text-stone-800 transition-colors hover:bg-stone-200 active:bg-stone-300"
+              >
+                {yen(note)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <p className="text-[10px] font-semibold tracking-widest text-stone-400 uppercase">
+            {t.counter.cashCoins}
+          </p>
+          <div className="mt-1 grid grid-cols-3 gap-1.5">
+            {COINS.map((coin) => (
+              <button
+                key={coin}
+                type="button"
+                onClick={() => onAdd(coin)}
+                className="h-9 rounded-lg bg-stone-100 text-sm font-semibold text-stone-800 transition-colors hover:bg-stone-200 active:bg-stone-300"
+              >
+                {yen(coin)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 rounded-lg bg-stone-50 px-3 py-2">
+          <span className="text-xs font-medium text-stone-500">
+            {t.counter.cashReceived}
+          </span>
+          <span
+            data-cash-received
+            className="ml-auto text-xl font-bold tabular-nums"
+          >
+            {yen(received)}
+          </span>
+          <button
+            type="button"
+            onClick={onClear}
+            disabled={received === 0}
+            className="text-xs text-stone-400 hover:text-red-600 disabled:opacity-40"
+          >
+            {t.counter.cashClear}
+          </button>
+        </div>
+
+        <Button
+          className="w-full"
+          disabled={total <= 0 || received <= 0}
+          onClick={onCalculate}
+        >
+          {t.counter.cashCalculate}
+        </Button>
+
+        {result !== null ? (
+          <div
+            className={`rounded-lg px-3 py-2 ${
+              result >= 0 ? "bg-green-50 text-green-900" : "bg-red-50 text-red-700"
+            }`}
+          >
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="text-sm font-medium">
+                {result >= 0 ? t.counter.cashChange : t.counter.cashShort}
+              </span>
+              <span className="text-xl font-bold tabular-nums">
+                {yen(Math.abs(result))}
+              </span>
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </Card>
   );
 }
 

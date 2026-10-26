@@ -16,7 +16,7 @@ Next.js 16 · Postgres · Drizzle · Tailwind · self-hosted on the homelab.
 | `/s/[slug]` | public | Stall menu, prices, sale, sold-out state |
 | `/login` | staff | Shared stall account or admin |
 | `/mode` | staff | Pick front/back + device name for this device |
-| `/counter` | front | Build an order, place it, hand over ready orders |
+| `/counter` | front | Build an order, calculate change, place it, hand over ready orders |
 | `/manage` | front | Items, photos, prices, categories, sale, open/closed, QR |
 | `/queue` | back | Prep queue with ticket age, mark ready |
 | `/admin` | admin | Create stalls, reset passwords, today's takings |
