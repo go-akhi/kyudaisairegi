@@ -15,6 +15,13 @@
       "when": 1793026806188,
       "tag": "0001_lonely_vulcan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793032181966,
+      "tag": "0002_smiling_mole_man",
+      "breakpoints": true
     }
   ]
 }

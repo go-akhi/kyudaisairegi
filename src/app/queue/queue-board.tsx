@@ -73,12 +73,22 @@ export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
                   <Card className={`p-4 ${urgency(waited)}`}>
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="text-4xl font-bold leading-none">
+                        <p className="flex flex-wrap items-baseline gap-2 text-4xl font-bold leading-none">
                           #{order.number}
+                          {order.addonNo > 0 ? (
+                            <span className="rounded-md bg-amber-100 px-2 py-1 text-sm font-semibold text-amber-900">
+                              {fill(t.queue.addon, { n: order.addonNo })}
+                            </span>
+                          ) : null}
                         </p>
                         <p className="mt-1 text-sm text-stone-500">
                           {order.customerName || t.common.noName}
                         </p>
+                        {order.hasAddons ? (
+                          <p className="mt-1 text-xs font-semibold text-amber-800">
+                            {t.queue.moreComing}
+                          </p>
+                        ) : null}
                       </div>
                       <span
                         className={`rounded-md px-2 py-1 text-sm font-semibold tabular-nums ${
@@ -163,7 +173,14 @@ export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
                       slow ? "bg-red-50 ring-red-300" : "bg-green-50 ring-green-200"
                     }`}
                   >
-                    <span className="text-xl font-bold">#{order.number}</span>
+                    <span className="text-xl font-bold">
+                      #{order.number}
+                      {order.addonNo > 0 ? (
+                        <span className="ml-1 align-middle text-xs font-semibold text-amber-800">
+                          +{order.addonNo}
+                        </span>
+                      ) : null}
+                    </span>
                     <span className="text-sm text-stone-500">
                       {order.customerName || t.common.noName}
                     </span>

@@ -22,7 +22,7 @@ export type CartLine = {
   optionIds: string[];
 };
 
-type Result = { number: number } | { error: string };
+type Result = { id: string; number: number } | { error: string };
 
 async function logEvent(input: {
   stallId: string;
@@ -42,25 +42,13 @@ async function logEvent(input: {
 
 /* ---------------------------------------------------------------- creation */
 
-export async function createOrder(input: {
-  customerName: string;
-  note: string;
-  lines: CartLine[];
-}): Promise<Result> {
-  const account = await requireStall();
-  const device = await getDevice();
-
-  const lines = (input.lines ?? []).filter(
-    (line) => line.qty > 0 && line.qty <= 30,
-  );
-  if (lines.length === 0) return { error: "Add something first" };
-  if (lines.length > 40) return { error: "That's a very long order" };
-
+/** Shared by new orders and add-ons: snapshot the menu and price the lines. */
+async function priceLines(stallId: string, lines: CartLine[]) {
   const itemIds = [...new Set(lines.map((line) => line.itemId))];
   const itemRows = await db
     .select()
     .from(items)
-    .where(and(eq(items.stallId, account.stallId), inArray(items.id, itemIds)));
+    .where(and(eq(items.stallId, stallId), inArray(items.id, itemIds)));
 
   const itemById = new Map(itemRows.map((item) => [item.id, item]));
 
@@ -93,6 +81,25 @@ export async function createOrder(input: {
     0,
   );
 
+  return { priced, subtotalYen };
+}
+
+export async function createOrder(input: {
+  customerName: string;
+  note: string;
+  lines: CartLine[];
+}): Promise<Result> {
+  const account = await requireStall();
+  const device = await getDevice();
+
+  const lines = (input.lines ?? []).filter(
+    (line) => line.qty > 0 && line.qty <= 30,
+  );
+  if (lines.length === 0) return { error: "Add something first" };
+  if (lines.length > 40) return { error: "That's a very long order" };
+
+  const { priced, subtotalYen } = await priceLines(account.stallId, lines);
+
   const stallRow = await db
     .select({ salePct: stalls.salePct })
     .from(stalls)
@@ -109,7 +116,7 @@ export async function createOrder(input: {
   const day = dayJst();
 
   try {
-    const number = await db.transaction(async (tx) => {
+    const created = await db.transaction(async (tx) => {
       const [counter] = await tx
         .insert(orderCounter)
         .values({ stallId: account.stallId, day, lastNumber: 1 })
@@ -167,12 +174,141 @@ export async function createOrder(input: {
         payload: { number: order.number, totalYen, discountPct: salePct },
       });
 
-      return order.number;
+      return order;
     });
 
-    return { number };
+    return { id: created.id, number: created.number };
   } catch {
     return { error: "Could not save the order. Try again." };
+  }
+}
+
+/**
+ * A linked add-on: same customer number, same frozen discount, its own
+ * kitchen ticket. The original keeps its status; the queue shows a
+ * "more coming" marker while any add-on is still open.
+ */
+export async function createAddOn(
+  parentOrderId: string,
+  input: { customerName: string; note: string; lines: CartLine[] },
+): Promise<
+  | { id: string; number: number; addonNo: number; totalYen: number }
+  | { error: string }
+> {
+  const account = await requireStall();
+  const device = await getDevice();
+
+  const lines = (input.lines ?? []).filter(
+    (line) => line.qty > 0 && line.qty <= 30,
+  );
+  if (lines.length === 0) return { error: "Add something first" };
+  if (lines.length > 40) return { error: "That's a very long order" };
+
+  try {
+    return await db.transaction(async (tx) => {
+      // Lock the parent so two tills cannot allocate the same add-on number.
+      const [parent] = await tx
+        .select()
+        .from(orders)
+        .where(
+          and(
+            eq(orders.id, parentOrderId),
+            eq(orders.stallId, account.stallId),
+          ),
+        )
+        .limit(1)
+        .for("update");
+
+      if (!parent) return { error: "closed" };
+      if (parent.status === "completed" || parent.status === "cancelled") {
+        return { error: "closed" };
+      }
+
+      const { priced, subtotalYen } = await priceLines(account.stallId, lines);
+
+      // Same percentage as the parent, even if the stall's sale has changed.
+      const discountYen = priced.reduce(
+        (sum, line) =>
+          sum + lineDiscountYen(line.unitPriceYen, line.qty, parent.discountPct),
+        0,
+      );
+      const totalYen = subtotalYen - discountYen;
+
+      const [next] = await tx
+        .select({
+          addonNo: sql<number>`coalesce(max(${orders.addonNo}), 0) + 1`,
+        })
+        .from(orders)
+        .where(eq(orders.parentOrderId, parent.id));
+
+      const [child] = await tx
+        .insert(orders)
+        .values({
+          stallId: account.stallId,
+          day: parent.day,
+          number: parent.number,
+          addonNo: Number(next?.addonNo ?? 1),
+          parentOrderId: parent.id,
+          customerName: (input.customerName.trim() || parent.customerName).slice(0, 40),
+          note: (input.note.trim() || parent.note).slice(0, 200),
+          deviceLabel: device.label,
+          subtotalYen,
+          discountPct: parent.discountPct,
+          discountYen,
+          totalYen,
+        })
+        .returning({
+          id: orders.id,
+          number: orders.number,
+          addonNo: orders.addonNo,
+        });
+
+      for (const line of priced) {
+        const [orderItem] = await tx
+          .insert(orderItems)
+          .values({
+            orderId: child.id,
+            itemId: line.item.id,
+            nameSnapshot: line.item.name,
+            unitPriceYen: line.unitPriceYen,
+            qty: line.qty,
+          })
+          .returning({ id: orderItems.id });
+
+        if (line.chosen.length > 0) {
+          await tx.insert(orderItemOptions).values(
+            line.chosen.map((option) => ({
+              orderItemId: orderItem.id,
+              optionId: option.id,
+              nameSnapshot: option.name,
+              priceDeltaYen: option.priceDeltaYen,
+            })),
+          );
+        }
+      }
+
+      await tx.insert(events).values({
+        stallId: account.stallId,
+        orderId: child.id,
+        type: "order.addon",
+        deviceLabel: device.label,
+        payload: {
+          number: child.number,
+          addonNo: child.addonNo,
+          parentOrderId: parent.id,
+          totalYen,
+        },
+      });
+
+      return {
+        id: child.id,
+        number: child.number,
+        addonNo: child.addonNo,
+        totalYen,
+      };
+    });
+  } catch {
+    return { error: "save" };
   }
 }
 

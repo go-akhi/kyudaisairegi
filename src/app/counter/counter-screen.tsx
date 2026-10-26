@@ -4,7 +4,7 @@ import { useMemo, useState, useTransition } from "react";
 import useSWR from "swr";
 import type { MenuCategory, MenuItem } from "@/lib/menu-types";
 import type { CartLine } from "@/lib/actions/orders";
-import { cancelOrder, completeOrder, createOrder } from "@/lib/actions/orders";
+import { cancelOrder, completeOrder, createAddOn, createOrder } from "@/lib/actions/orders";
 import type { QueueOrder, QueueResponse } from "@/lib/queue-types";
 import { elapsedLabel, elapsedSeconds, unitSalePrice, yen } from "@/lib/format";
 import { fill, type Dict, type Locale } from "@/lib/i18n/dictionaries";
@@ -28,6 +28,8 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
   const [expanded, setExpanded] = useState<string | null>(null);
   const [picked, setPicked] = useState<Record<string, string[]>>({});
   const [placed, setPlaced] = useState<{ number: number; total: number } | null>(null);
+  const [lastOrder, setLastOrder] = useState<{ id: string; number: number } | null>(null);
+  const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -82,7 +84,7 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
         qty: (prev[key]?.qty ?? 0) + 1,
       },
     }));
-    setPlaced(null);
+    // Keep the confirmation up: it now also anchors an add-on to this number.
   }
 
   function bump(key: string, delta: number) {
@@ -99,6 +101,7 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
 
   function submit() {
     setError("");
+    setNotice("");
     startTransition(async () => {
       const result = await createOrder({
         customerName: name,
@@ -110,8 +113,43 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
         return;
       }
       setPlaced({ number: result.number, total });
+      // Keep the ticket open for a possible add-on until "Next order".
+      setLastOrder({ id: result.id, number: result.number });
       setCart({});
       setName("");
+      setNote("");
+      setExpanded(null);
+      mutate();
+    });
+  }
+
+  function submitAddOn() {
+    if (!lastOrder) return;
+    setError("");
+    setNotice("");
+    startTransition(async () => {
+      const result = await createAddOn(lastOrder.id, {
+        customerName: name,
+        note,
+        lines: Object.values(cart),
+      });
+      if ("error" in result) {
+        setError(
+          result.error === "closed"
+            ? t.counter.addOnClosed
+            : result.error === "save"
+              ? t.counter.addOnFailed
+              : result.error,
+        );
+        return;
+      }
+      setNotice(
+        fill(t.counter.addOnPlaced, {
+          number: result.number,
+          total: yen(result.totalYen),
+        }),
+      );
+      setCart({});
       setNote("");
       setExpanded(null);
       mutate();
@@ -253,7 +291,11 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
                   {fill(t.counter.collectCash, { total: yen(placed.total) })}
                 </p>
                 <button
-                  onClick={() => setPlaced(null)}
+                  onClick={() => {
+                    setPlaced(null);
+                    setLastOrder(null);
+                    setNotice("");
+                  }}
                   className="mt-3 h-10 w-full rounded-lg bg-white/15 font-medium"
                 >
                   {t.counter.nextOrder}
@@ -363,9 +405,27 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
               </p>
             ) : null}
 
+            {notice ? (
+              <p className="mt-2 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-800">
+                {notice}
+              </p>
+            ) : null}
+
+            {lastOrder ? (
+              <Button
+                size="lg"
+                variant="secondary"
+                className="mt-3 w-full"
+                disabled={lines.length === 0 || pending}
+                onClick={submitAddOn}
+              >
+                {fill(t.counter.addOn, { number: lastOrder.number })}
+              </Button>
+            ) : null}
+
             <Button
               size="lg"
-              className="mt-3 w-full"
+              className={lastOrder ? "mt-2 w-full" : "mt-3 w-full"}
               disabled={lines.length === 0 || pending}
               onClick={submit}
             >
@@ -446,13 +506,20 @@ function ReadyRail({
             return (
               <li key={order.id} className="w-[270px] shrink-0">
                 <Card className="flex h-full flex-col p-2.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="min-w-0 truncate text-xs text-stone-500">
-                      <span className="mr-1.5 text-xl leading-none font-bold text-stone-900">
-                        #{order.number}
-                      </span>
-                      {order.customerName || t.common.noName}
-                    </p>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex min-w-0 items-center gap-1.5">
+                      <p className="min-w-0 truncate text-xs text-stone-500">
+                        <span className="mr-1.5 text-xl leading-none font-bold text-stone-900">
+                          #{order.number}
+                        </span>
+                        {order.customerName || t.common.noName}
+                      </p>
+                      {order.addonNo > 0 ? (
+                        <span className="shrink-0 rounded bg-amber-100 px-1 py-0.5 text-[10px] font-semibold text-amber-900">
+                          {fill(t.queue.addon, { n: order.addonNo })}
+                        </span>
+                      ) : null}
+                    </div>
                     <span
                       className={`shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-semibold tabular-nums ${
                         late
@@ -469,6 +536,11 @@ function ReadyRail({
                   <p className="mt-1 truncate text-xs text-stone-600" title={summary}>
                     {summary}
                   </p>
+                  {order.hasAddons ? (
+                    <p className="mt-1 inline-flex w-fit items-center rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold text-amber-900">
+                      {t.queue.moreComing}
+                    </p>
+                  ) : null}
                   {order.note ? (
                     <p className="mt-0.5 truncate text-[11px] font-medium text-amber-700">
                       {order.note}

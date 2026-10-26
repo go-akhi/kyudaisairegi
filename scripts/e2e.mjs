@@ -67,6 +67,14 @@ try {
   const orderNumber = Number(numberText.replace("#", ""));
   check(`order placed with a number (${numberText})`, orderNumber > 0);
 
+  // Extra items for the same customer become a linked add-on ticket.
+  await front.page.getByRole("button", { name: /Lemonade/ }).click();
+  await front.page
+    .getByRole("button", { name: new RegExp(`Add to #${orderNumber}`) })
+    .click();
+  await front.page.waitForSelector("text=/Added to #/", { timeout: 5000 });
+  check("add-on accepted on the same number", true);
+
   // Clear the confirmation so the only place the number can appear is the rail.
   await front.page.getByRole("button", { name: "Next order" }).click();
 
@@ -81,8 +89,17 @@ try {
     "ticket carries the note",
     (await back.page.getByText("no mayo").count()) > 0,
   );
+  check(
+    "kitchen sees the linked add-on ticket",
+    (await back.page.getByText("Add-on 1").count()) > 0,
+  );
 
   await ticket.getByRole("button", { name: "Ready" }).click();
+  const addonTicket = back.page
+    .locator("li", { hasText: "#" + orderNumber })
+    .filter({ hasText: "Add-on 1" })
+    .first();
+  await addonTicket.getByRole("button", { name: "Ready" }).click();
   await back.page.waitForSelector("text=Waiting at the counter", { timeout: 5000 });
   await back.page.waitForTimeout(3500); // let the front's poll catch up
 
@@ -90,8 +107,19 @@ try {
   const readyCard = front.page.locator("li", { hasText: "#" + orderNumber }).first();
   await readyCard.waitFor({ timeout: 8000 });
   check("front sees the order in the ready rail", await readyCard.isVisible());
+  check(
+    "parent ticket warns that the add-on is still coming",
+    (await readyCard.innerText()).includes("More coming"),
+  );
+
+  const addonCard = front.page
+    .locator("li", { hasText: "#" + orderNumber })
+    .filter({ hasText: "Add-on 1" })
+    .first();
+  check("front sees the add-on in the rail", await addonCard.isVisible());
 
   await readyCard.getByRole("button", { name: "Handed over" }).click();
+  await addonCard.getByRole("button", { name: "Handed over" }).click();
   await front.page.waitForTimeout(1200);
   check(
     "finished order leaves the ready rail",

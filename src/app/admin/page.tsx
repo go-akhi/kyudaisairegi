@@ -40,7 +40,7 @@ export default async function AdminPage({
   const salesRows = await db
     .select({
       stallId: orders.stallId,
-      orderCount: sql<number>`count(*)::int`,
+      orderCount: sql<number>`count(distinct ${orders.number})::int`,
       revenue: sql<number>`coalesce(sum(${orders.totalYen}), 0)::int`,
     })
     .from(orders)

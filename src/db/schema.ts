@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   boolean,
   date,
   index,
@@ -119,8 +120,14 @@ export const orders = pgTable(
       .references(() => stalls.id, { onDelete: "cascade" }),
     /** JST calendar day, 'YYYY-MM-DD' */
     day: date("day", { mode: "string" }).notNull(),
-    /** Per-stall, per-day, starts at 1 */
+    /** Per-stall, per-day, starts at 1. Add-ons reuse their parent's number. */
     number: integer("number").notNull(),
+    /** 0 = the original ticket, 1.. = linked add-ons on the same number */
+    addonNo: integer("addon_no").notNull().default(0),
+    parentOrderId: text("parent_order_id").references(
+      (): AnyPgColumn => orders.id,
+      { onDelete: "cascade" },
+    ),
     status: text("status").notNull().default("placed"),
     customerName: text("customer_name").notNull().default(""),
     note: text("note").notNull().default(""),
@@ -138,7 +145,13 @@ export const orders = pgTable(
     cancelReason: text("cancel_reason"),
   },
   (t) => [
-    uniqueIndex("orders_stall_day_number_idx").on(t.stallId, t.day, t.number),
+    uniqueIndex("orders_stall_day_number_idx").on(
+      t.stallId,
+      t.day,
+      t.number,
+      t.addonNo,
+    ),
+    index("orders_parent_idx").on(t.parentOrderId),
     index("orders_stall_status_idx").on(t.stallId, t.status),
     index("orders_created_idx").on(t.createdAt),
   ],

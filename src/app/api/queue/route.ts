@@ -70,10 +70,17 @@ export async function GET() {
     itemsByOrder.set(item.orderId, list);
   }
 
+  const parentsWithAddons = new Set(
+    orderRows.map((order) => order.parentOrderId).filter(Boolean),
+  );
+
   const payload: QueueResponse = {
     orders: orderRows.map((order) => ({
       id: order.id,
       number: order.number,
+      addonNo: order.addonNo,
+      // Only open add-ons mean "more is still coming".
+      hasAddons: parentsWithAddons.has(order.id),
       status: order.status as "placed" | "ready",
       customerName: order.customerName,
       note: order.note,
