@@ -67,6 +67,9 @@ try {
   const orderNumber = Number(numberText.replace("#", ""));
   check(`order placed with a number (${numberText})`, orderNumber > 0);
 
+  // Clear the confirmation so the only place the number can appear is the rail.
+  await front.page.getByRole("button", { name: "Next order" }).click();
+
   /* ----------------------------------------------------------------- back */
   const back = await device("back", "E2E Back");
   check("back lands on the queue", back.page.url().endsWith("/queue"));
@@ -84,15 +87,14 @@ try {
   await back.page.waitForTimeout(3500); // let the front's poll catch up
 
   /* --------------------------------------------------------------- pick up */
-  await front.page.getByRole("button", { name: /Ready to hand over/ }).click();
   const readyCard = front.page.locator("li", { hasText: "#" + orderNumber }).first();
   await readyCard.waitFor({ timeout: 8000 });
-  check("front sees the order as ready", await readyCard.isVisible());
+  check("front sees the order in the ready rail", await readyCard.isVisible());
 
   await readyCard.getByRole("button", { name: "Handed over" }).click();
   await front.page.waitForTimeout(1200);
   check(
-    "finished order leaves the front's ready list",
+    "finished order leaves the ready rail",
     (await front.page.getByText("#" + orderNumber).count()) === 0,
   );
 
