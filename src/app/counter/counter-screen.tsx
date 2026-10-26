@@ -5,8 +5,9 @@ import useSWR from "swr";
 import type { MenuCategory, MenuItem } from "@/lib/menu-types";
 import type { CartLine } from "@/lib/actions/orders";
 import { cancelOrder, completeOrder, createOrder } from "@/lib/actions/orders";
-import type { QueueResponse } from "@/lib/queue-types";
+import type { QueueOrder, QueueResponse } from "@/lib/queue-types";
 import { elapsedLabel, elapsedSeconds, unitSalePrice, yen } from "@/lib/format";
+import { fill, type Dict, type Locale } from "@/lib/i18n/dictionaries";
 import { useNow } from "@/lib/use-now";
 import { Badge, Button, Card, Empty, field } from "@/components/ui";
 
@@ -16,9 +17,11 @@ type Props = {
   categories: MenuCategory[];
   uncategorised: MenuItem[];
   salePct: number;
+  locale: Locale;
+  t: Dict;
 };
 
-export function CounterScreen({ categories, uncategorised, salePct }: Props) {
+export function CounterScreen({ categories, uncategorised, salePct, locale, t }: Props) {
   const [tab, setTab] = useState<"order" | "ready">("order");
   const [cart, setCart] = useState<Record<string, CartLine>>({});
   const [name, setName] = useState("");
@@ -38,10 +41,10 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
     () => [
       ...categories.filter((category) => category.items.length > 0),
       ...(uncategorised.length > 0
-        ? [{ id: "other", name: "Other", items: uncategorised }]
+        ? [{ id: "other", name: t.manage.noCategory, items: uncategorised }]
         : []),
     ],
-    [categories, uncategorised],
+    [categories, uncategorised, t.manage.noCategory],
   );
 
   const itemById = useMemo(() => {
@@ -125,7 +128,9 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
   }
 
   function cancel(orderId: string, orderNumber: number) {
-    const reason = window.prompt(`Cancel order #${orderNumber}. Reason?`);
+    const reason = window.prompt(
+      fill(t.counter.cancelPrompt, { number: orderNumber }),
+    );
     if (reason === null) return;
     setBusyId(orderId);
     void cancelOrder(orderId, reason).finally(() => {
@@ -141,13 +146,13 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
           onClick={() => setTab("order")}
           className={`h-11 rounded-xl px-4 font-medium ${tab === "order" ? "bg-stone-900 text-white" : "bg-white text-stone-700 ring-1 ring-stone-300"}`}
         >
-          New order
+          {t.counter.newOrder}
         </button>
         <button
           onClick={() => setTab("ready")}
           className={`h-11 rounded-xl px-4 font-medium ${tab === "ready" ? "bg-green-700 text-white" : "bg-white text-stone-700 ring-1 ring-stone-300"}`}
         >
-          Ready to hand over
+          {t.counter.readyTab}
           {ready.length > 0 ? (
             <span className="ml-2 rounded-md bg-white/20 px-1.5 py-0.5 text-sm">
               {ready.length}
@@ -162,13 +167,13 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
           busyId={busyId}
           onHandOver={handOver}
           onCancel={cancel}
+          locale={locale}
+          t={t}
         />
       ) : (
         <div className="grid items-start gap-4 lg:grid-cols-[1fr_380px]">
           <div className="space-y-7">
-            {sections.length === 0 ? (
-              <Empty>No items on the menu yet. Add some in Manage.</Empty>
-            ) : null}
+            {sections.length === 0 ? <Empty>{t.counter.noItems}</Empty> : null}
 
             {sections.map((section) => (
               <section key={section.id}>
@@ -198,7 +203,11 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
                           </div>
                           {item.options.length > 0 ? (
                             <span className="mt-1 block text-xs text-stone-500">
-                              {item.options.length} option{item.options.length > 1 ? "s" : ""}
+                              {item.options.length === 1
+                                ? fill(t.counter.optionCount, { n: 1 })
+                                : fill(t.counter.optionCountPlural, {
+                                    n: item.options.length,
+                                  })}
                             </span>
                           ) : null}
                         </button>
@@ -242,7 +251,7 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
                                 setExpanded(null);
                               }}
                             >
-                              Add to order
+                              {t.counter.addToOrder}
                             </Button>
                           </div>
                         ) : null}
@@ -259,26 +268,26 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
               {placed ? (
                 <div className="mb-4 rounded-xl bg-green-700 px-4 py-4 text-white">
                   <p className="text-xs tracking-widest uppercase opacity-80">
-                    Order placed
+                    {t.counter.orderPlaced}
                   </p>
                   <p className="text-4xl font-bold">#{placed.number}</p>
                   <p className="mt-1 text-sm">
-                    Collect {yen(placed.total)} in cash
+                    {fill(t.counter.collectCash, { total: yen(placed.total) })}
                   </p>
                   <button
                     onClick={() => setPlaced(null)}
                     className="mt-3 h-10 w-full rounded-lg bg-white/15 font-medium"
                   >
-                    Next order
+                    {t.counter.nextOrder}
                   </button>
                 </div>
               ) : null}
 
-              <h2 className="mb-2 font-semibold">Order</h2>
+              <h2 className="mb-2 font-semibold">{t.counter.order}</h2>
 
               {lines.length === 0 ? (
                 <p className="py-6 text-center text-sm text-stone-400">
-                  Tap items to add them.
+                  {t.counter.tapItems}
                 </p>
               ) : (
                 <ul className="divide-y divide-stone-100">
@@ -301,14 +310,16 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
                             </p>
                           ) : null}
                           <p className="text-xs text-stone-500">
-                            {yen(unitSalePrice(unitPrice(line), salePct))} each
+                            {fill(t.counter.each, {
+                              price: yen(unitSalePrice(unitPrice(line), salePct)),
+                            })}
                           </p>
                         </div>
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => bump(key, -1)}
                             className="h-8 w-8 rounded-lg bg-stone-100 text-lg leading-none"
-                            aria-label="Remove one"
+                            aria-label={t.counter.removeOne}
                           >
                             −
                           </button>
@@ -318,7 +329,7 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
                           <button
                             onClick={() => bump(key, 1)}
                             className="h-8 w-8 rounded-lg bg-stone-100 text-lg leading-none"
-                            aria-label="Add one"
+                            aria-label={t.counter.addOne}
                           >
                             +
                           </button>
@@ -336,17 +347,17 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
                 {salePct > 0 && gross > 0 ? (
                   <>
                     <div className="flex justify-between text-stone-500">
-                      <span>Subtotal</span>
+                      <span>{t.counter.subtotal}</span>
                       <span>{yen(gross)}</span>
                     </div>
                     <div className="flex justify-between text-orange-700">
-                      <span>{salePct}% off</span>
+                      <span>{fill(t.counter.off, { pct: salePct })}</span>
                       <span>−{yen(gross - total)}</span>
                     </div>
                   </>
                 ) : null}
                 <div className="flex justify-between text-lg font-semibold">
-                  <span>Total</span>
+                  <span>{t.counter.total}</span>
                   <span>{yen(total)}</span>
                 </div>
               </div>
@@ -355,14 +366,14 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
                 <input
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Name for calling out"
+                  placeholder={t.counter.namePlaceholder}
                   className={field}
                   maxLength={40}
                 />
                 <input
                   value={note}
                   onChange={(event) => setNote(event.target.value)}
-                  placeholder="Note (no sauce, allergy…)"
+                  placeholder={t.counter.notePlaceholder}
                   className={field}
                   maxLength={200}
                 />
@@ -380,7 +391,9 @@ export function CounterScreen({ categories, uncategorised, salePct }: Props) {
                 disabled={lines.length === 0 || pending}
                 onClick={submit}
               >
-                {pending ? "Saving…" : `Place order · ${yen(total)}`}
+                {pending
+                  ? t.counter.saving
+                  : fill(t.counter.placeOrder, { total: yen(total) })}
               </Button>
             </Card>
           </aside>
@@ -395,16 +408,20 @@ function ReadyList({
   busyId,
   onHandOver,
   onCancel,
+  locale,
+  t,
 }: {
-  orders: QueueResponse["orders"];
+  orders: QueueOrder[];
   busyId: string | null;
   onHandOver: (id: string) => void;
   onCancel: (id: string, number: number) => void;
+  locale: Locale;
+  t: Dict;
 }) {
   const now = useNow(1000);
 
   if (orders.length === 0) {
-    return <Empty>Nothing waiting at the counter.</Empty>;
+    return <Empty>{t.counter.emptyReady}</Empty>;
   }
 
   return (
@@ -418,10 +435,13 @@ function ReadyList({
                 <div>
                   <p className="text-3xl font-bold leading-none">#{order.number}</p>
                   <p className="mt-1 text-sm text-stone-500">
-                    {order.customerName || "No name"} · {elapsedLabel(waited)} waiting
+                    {order.customerName || t.common.noName} ·{" "}
+                    {fill(t.counter.waitingFor, {
+                      time: elapsedLabel(waited, locale),
+                    })}
                   </p>
                 </div>
-                <Badge tone="ok">Ready</Badge>
+                <Badge tone="ok">{t.queue.ready}</Badge>
               </div>
 
               <ul className="mt-3 space-y-0.5 text-sm text-stone-700">
@@ -446,13 +466,13 @@ function ReadyList({
                   disabled={busyId === order.id}
                   onClick={() => onHandOver(order.id)}
                 >
-                  Handed over
+                  {t.counter.handedOver}
                 </Button>
                 <button
                   onClick={() => onCancel(order.id, order.number)}
                   className="h-14 px-3 text-sm text-stone-400 hover:text-red-600"
                 >
-                  Cancel
+                  {t.counter.cancelAction}
                 </button>
               </div>
             </Card>

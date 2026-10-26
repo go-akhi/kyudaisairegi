@@ -46,6 +46,16 @@ pnpm dev          # in one terminal
 pnpm e2e          # in another (uses the dev seed + /usr/bin/google-chrome)
 ```
 
+## Language
+
+English and Japanese, switchable from the header of every page (staff screens
+and public menu alike). The choice lives in the `kd_locale` cookie; without one
+the browser's `Accept-Language` decides, so a Japanese phone opening the QR
+lands on Japanese already. URLs never change — QR codes keep working.
+
+Only the app chrome is translated. Stall-typed content (item names,
+descriptions, notes) is shown exactly as the owner wrote it.
+
 ## Deploy (homelab + Cloudflare Tunnel)
 
 1. Point `kyudaisai.<your-domain>` at the tunnel in the Cloudflare dashboard.

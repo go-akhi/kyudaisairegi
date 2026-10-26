@@ -1,26 +1,36 @@
-import { listStalls } from "@/lib/stalls";
-import { Badge, Card, Empty } from "@/components/ui";
 import Link from "next/link";
+import { LocaleSwitcher } from "@/components/locale-switcher";
+import { Badge, Card, Empty } from "@/components/ui";
+import { fill } from "@/lib/i18n/dictionaries";
+import { getDict } from "@/lib/i18n/locale";
+import { listStalls } from "@/lib/stalls";
 
 export const dynamic = "force-dynamic";
 
 export default async function FestivalPage() {
-  const stalls = await listStalls();
+  const [{ locale, t }, stalls] = await Promise.all([getDict(), listStalls()]);
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-10">
-      <header className="mb-8">
-        <p className="text-sm font-semibold tracking-widest text-orange-700 uppercase">
-          Festival
-        </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight">Stalls</h1>
-        <p className="mt-1 text-sm text-stone-500">
-          Browse the menu. Order and pay in cash at the counter.
-        </p>
+      <header className="mb-8 flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold tracking-widest text-orange-700 uppercase">
+            {t.festival.eyebrow}
+          </p>
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight">
+            {t.festival.title}
+          </h1>
+          <p className="mt-1 text-sm text-stone-500">{t.festival.subtitle}</p>
+        </div>
+        <LocaleSwitcher
+          current={locale}
+          other={t.locale.other}
+          label={t.locale.label}
+        />
       </header>
 
       {stalls.length === 0 ? (
-        <Empty>No stalls yet.</Empty>
+        <Empty>{t.festival.noStalls}</Empty>
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2">
           {stalls.map((stall) => (
@@ -47,9 +57,9 @@ export default async function FestivalPage() {
                         {stall.displayName}
                       </h2>
                       {stall.isOpen ? (
-                        <Badge tone="ok">Open</Badge>
+                        <Badge tone="ok">{t.common.open}</Badge>
                       ) : (
-                        <Badge>Closed</Badge>
+                        <Badge>{t.common.closed}</Badge>
                       )}
                     </div>
                     {stall.locationNote ? (
@@ -57,7 +67,7 @@ export default async function FestivalPage() {
                     ) : null}
                     {stall.salePct > 0 ? (
                       <p className="mt-2 text-sm font-semibold text-orange-700">
-                        {stall.salePct}% off everything
+                        {fill(t.menu.saleBanner, { pct: stall.salePct })}
                       </p>
                     ) : null}
                   </div>
@@ -69,7 +79,10 @@ export default async function FestivalPage() {
       )}
 
       <p className="mt-10 text-center text-xs text-stone-400">
-        Staff? <Link href="/login" className="underline">Sign in</Link>
+        {t.festival.staff}{" "}
+        <Link href="/login" className="underline">
+          {t.login.submit}
+        </Link>
       </p>
     </main>
   );

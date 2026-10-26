@@ -4,6 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { cancelOrder, markReady } from "@/lib/actions/orders";
 import { elapsedLabel, elapsedSeconds } from "@/lib/format";
+import { fill, type Dict, type Locale } from "@/lib/i18n/dictionaries";
 import type { QueueOrder, QueueResponse } from "@/lib/queue-types";
 import { useNow } from "@/lib/use-now";
 import { Badge, Button, Card, Empty } from "@/components/ui";
@@ -16,7 +17,7 @@ function urgency(seconds: number) {
   return "bg-white ring-stone-200";
 }
 
-export function QueueBoard() {
+export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
   const { data, mutate, isLoading } = useSWR<QueueResponse>("/api/queue", fetcher, {
     refreshInterval: 3000,
   });
@@ -36,7 +37,7 @@ export function QueueBoard() {
   }
 
   function cancel(order: QueueOrder) {
-    const reason = window.prompt(`Cancel #${order.number}. Reason?`);
+    const reason = window.prompt(fill(t.queue.cancelPrompt, { number: order.number }));
     if (reason === null) return;
     setBusyId(order.id);
     void cancelOrder(order.id, reason).finally(() => {
@@ -46,7 +47,7 @@ export function QueueBoard() {
   }
 
   if (isLoading && !data) {
-    return <Empty>Loading the queue…</Empty>;
+    return <Empty>{t.queue.loading}</Empty>;
   }
 
   return (
@@ -54,15 +55,15 @@ export function QueueBoard() {
       <section>
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="text-sm font-semibold tracking-widest text-stone-500 uppercase">
-            Preparing
+            {t.queue.preparing}
           </h2>
           <span className="text-sm text-stone-400">
-            {preparing.length} open
+            {fill(t.queue.openCount, { n: preparing.length })}
           </span>
         </div>
 
         {preparing.length === 0 ? (
-          <Empty>Queue is clear.</Empty>
+          <Empty>{t.queue.queueClear}</Empty>
         ) : (
           <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {preparing.map((order) => {
@@ -76,7 +77,7 @@ export function QueueBoard() {
                           #{order.number}
                         </p>
                         <p className="mt-1 text-sm text-stone-500">
-                          {order.customerName || "No name"}
+                          {order.customerName || t.common.noName}
                         </p>
                       </div>
                       <span
@@ -88,7 +89,7 @@ export function QueueBoard() {
                               : "bg-stone-100 text-stone-700"
                         }`}
                       >
-                        {elapsedLabel(waited)}
+                        {elapsedLabel(waited, locale)}
                       </span>
                     </div>
 
@@ -121,13 +122,13 @@ export function QueueBoard() {
                         disabled={busyId === order.id}
                         onClick={() => bump(order)}
                       >
-                        Ready
+                        {t.queue.ready}
                       </Button>
                       <button
                         onClick={() => cancel(order)}
                         className="h-14 px-3 text-sm text-stone-400 hover:text-red-600"
                       >
-                        Cancel
+                        {t.queue.cancelAction}
                       </button>
                     </div>
                   </Card>
@@ -141,13 +142,15 @@ export function QueueBoard() {
       <section>
         <div className="mb-3 flex items-baseline justify-between">
           <h2 className="text-sm font-semibold tracking-widest text-stone-500 uppercase">
-            Waiting at the counter
+            {t.queue.waitingCounter}
           </h2>
-          <span className="text-sm text-stone-400">{ready.length} ready</span>
+          <span className="text-sm text-stone-400">
+            {fill(t.queue.readyCount, { n: ready.length })}
+          </span>
         </div>
 
         {ready.length === 0 ? (
-          <p className="text-sm text-stone-400">Nothing waiting.</p>
+          <p className="text-sm text-stone-400">{t.queue.nothingWaiting}</p>
         ) : (
           <ul className="flex flex-wrap gap-2">
             {ready.map((order) => {
@@ -157,17 +160,15 @@ export function QueueBoard() {
                 <li key={order.id}>
                   <div
                     className={`flex items-center gap-3 rounded-xl px-3 py-2 ring-1 ${
-                      slow
-                        ? "bg-red-50 ring-red-300"
-                        : "bg-green-50 ring-green-200"
+                      slow ? "bg-red-50 ring-red-300" : "bg-green-50 ring-green-200"
                     }`}
                   >
                     <span className="text-xl font-bold">#{order.number}</span>
                     <span className="text-sm text-stone-500">
-                      {order.customerName || "No name"}
+                      {order.customerName || t.common.noName}
                     </span>
                     <Badge tone={slow ? "danger" : "ok"}>
-                      {elapsedLabel(waited)}
+                      {elapsedLabel(waited, locale)}
                     </Badge>
                   </div>
                 </li>

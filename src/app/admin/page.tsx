@@ -1,5 +1,6 @@
 import { and, eq, ne, sql } from "drizzle-orm";
 import QRCode from "qrcode";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { db } from "@/db";
 import { accounts, orders, stalls } from "@/db/schema";
 import { Badge, Button, Card, Field, TopBar, field } from "@/components/ui";
@@ -12,17 +13,10 @@ import {
 } from "@/lib/actions/admin";
 import { requireAdmin } from "@/lib/auth";
 import { dayJst, yen } from "@/lib/format";
+import { fill } from "@/lib/i18n/dictionaries";
+import { getDict } from "@/lib/i18n/locale";
 
 export const dynamic = "force-dynamic";
-
-const ERRORS: Record<string, string> = {
-  name: "Give the stall a name.",
-  slug: "The URL slug must be lowercase letters, numbers and dashes (3–40).",
-  username: "Usernames are lowercase letters, numbers, dot, dash or underscore.",
-  password: "Passwords must be at least 8 characters.",
-  taken: "That slug or username is already taken.",
-  missing: "That stall no longer exists.",
-};
 
 export default async function AdminPage({
   searchParams,
@@ -30,6 +24,7 @@ export default async function AdminPage({
   searchParams: Promise<{ error?: string; saved?: string }>;
 }) {
   await requireAdmin();
+  const { locale, t } = await getDict();
   const { error, saved } = await searchParams;
 
   const stallRows = await db
@@ -74,68 +69,86 @@ export default async function AdminPage({
     ),
   );
 
+  const errorMessage = error
+    ? (t.admin.errors as Record<string, string>)[error] ?? t.admin.errors.generic
+    : null;
+
+  const savedMessage =
+    saved === "password"
+      ? t.admin.savedPassword
+      : saved === "deleted"
+        ? t.admin.savedDeleted
+        : saved
+          ? t.admin.saved
+          : null;
+
   return (
     <>
       <TopBar
-        title="Festival admin"
-        subtitle="Stalls, accounts and today's numbers"
+        title={t.admin.title}
+        subtitle={t.admin.subtitle}
         right={
-          <form action={logout}>
-            <Button type="submit" variant="ghost" size="sm">
-              Sign out
-            </Button>
-          </form>
+          <div className="flex items-center gap-1">
+            <LocaleSwitcher
+              current={locale}
+              other={t.locale.other}
+              label={t.locale.label}
+            />
+            <form action={logout}>
+              <Button type="submit" variant="ghost" size="sm">
+                {t.nav.signOut}
+              </Button>
+            </form>
+          </div>
         }
       />
 
       <main className="mx-auto w-full max-w-4xl flex-1 space-y-5 px-4 py-5">
-        {error ? (
+        {errorMessage ? (
           <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-            {ERRORS[error] ?? "Something went wrong."}
+            {errorMessage}
           </p>
         ) : null}
-        {saved ? (
+        {savedMessage ? (
           <p className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-800">
-            {saved === "password"
-              ? "Password reset. All devices for that stall are signed out."
-              : saved === "deleted"
-                ? "Stall deleted."
-                : "Saved."}
+            {savedMessage}
           </p>
         ) : null}
 
         <Card className="p-4">
-          <h2 className="font-semibold">Today</h2>
-          <p className="mt-1 text-sm text-stone-500">{today} · JST</p>
+          <h2 className="font-semibold">{t.admin.today}</h2>
+          <p className="mt-1 text-sm text-stone-500">
+            {fill(t.admin.jst, { day: today })}
+          </p>
           <div className="mt-3 flex gap-6">
             <div>
               <p className="text-2xl font-semibold">{totals.orders}</p>
               <p className="text-xs tracking-wide text-stone-500 uppercase">
-                Orders
+                {t.admin.orders}
               </p>
             </div>
             <div>
               <p className="text-2xl font-semibold">{yen(totals.revenue)}</p>
               <p className="text-xs tracking-wide text-stone-500 uppercase">
-                Takings
+                {t.admin.takings}
               </p>
             </div>
             <div>
               <p className="text-2xl font-semibold">{stallRows.length}</p>
               <p className="text-xs tracking-wide text-stone-500 uppercase">
-                Stalls
+                {t.admin.stallCount}
               </p>
             </div>
           </div>
         </Card>
 
         <Card className="p-4">
-          <h2 className="mb-3 font-semibold">Add a stall</h2>
+          <h2 className="mb-3 font-semibold">{t.admin.addStall}</h2>
           <form action={createStall} className="grid gap-3 sm:grid-cols-2">
-            <Field label="Stall name">
+            <Field label={t.admin.stallName}>
               <input name="displayName" className={field} required maxLength={80} />
             </Field>
-            <Field label="URL slug" hint="Public menu: /s/this-value">
+            <Field label={t.admin.slug} hint={t.admin.slugHint}>
               <input
                 name="slug"
                 className={field}
@@ -144,7 +157,7 @@ export default async function AdminPage({
                 pattern="[a-z0-9][a-z0-9-]{1,38}[a-z0-9]"
               />
             </Field>
-            <Field label="Username" hint="Shared by every device at the stall.">
+            <Field label={t.admin.username} hint={t.admin.usernameHint}>
               <input
                 name="username"
                 className={field}
@@ -153,7 +166,7 @@ export default async function AdminPage({
                 placeholder="takoyaki"
               />
             </Field>
-            <Field label="Password" hint="At least 8 characters. Only you can reset it.">
+            <Field label={t.admin.password} hint={t.admin.passwordHint}>
               <input
                 name="password"
                 type="text"
@@ -163,18 +176,18 @@ export default async function AdminPage({
               />
             </Field>
             <div className="sm:col-span-2">
-              <Button type="submit">Create stall</Button>
+              <Button type="submit">{t.admin.createStall}</Button>
             </div>
           </form>
         </Card>
 
         <section className="space-y-3">
           <h2 className="text-sm font-semibold tracking-widest text-stone-500 uppercase">
-            Stalls
+            {t.admin.sectionStalls}
           </h2>
 
           {stallRows.length === 0 ? (
-            <p className="text-sm text-stone-500">No stalls yet.</p>
+            <p className="text-sm text-stone-500">{t.admin.noStalls}</p>
           ) : null}
 
           {stallRows.map(({ stall, username }, index) => {
@@ -187,16 +200,18 @@ export default async function AdminPage({
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold">{stall.displayName}</h3>
                       {stall.isOpen ? (
-                        <Badge tone="ok">Open</Badge>
+                        <Badge tone="ok">{t.common.open}</Badge>
                       ) : (
-                        <Badge>Closed</Badge>
+                        <Badge>{t.common.closed}</Badge>
                       )}
                       {stall.salePct > 0 ? (
-                        <Badge tone="warn">{stall.salePct}% off</Badge>
+                        <Badge tone="warn">
+                          {fill(t.manage.pctOff, { pct: stall.salePct })}
+                        </Badge>
                       ) : null}
                     </div>
                     <p className="mt-0.5 text-sm text-stone-500">
-                      {username ?? "no account"} ·{" "}
+                      {username ?? t.admin.noAccount} ·{" "}
                       <a
                         href={`/s/${stall.slug}`}
                         className="underline underline-offset-2"
@@ -209,7 +224,7 @@ export default async function AdminPage({
                   <div className="text-right text-sm">
                     <p className="font-semibold">{yen(sales?.revenue ?? 0)}</p>
                     <p className="text-stone-500">
-                      {sales?.orderCount ?? 0} orders today
+                      {fill(t.admin.ordersToday, { n: sales?.orderCount ?? 0 })}
                     </p>
                   </div>
                 </div>
@@ -223,13 +238,13 @@ export default async function AdminPage({
                       value={stall.isOpen ? "0" : "1"}
                     />
                     <Button type="submit" variant="secondary" size="sm">
-                      {stall.isOpen ? "Close" : "Open"}
+                      {stall.isOpen ? t.manage.closeStall : t.manage.openStall}
                     </Button>
                   </form>
 
                   <details className="rounded-lg">
                     <summary className="inline-flex h-9 cursor-pointer items-center rounded-xl px-3 text-sm font-medium text-stone-700 hover:bg-stone-200/70">
-                      QR
+                      {t.admin.qr}
                     </summary>
                     <div
                       className="mt-2 inline-block rounded-xl bg-white p-2 ring-1 ring-stone-200 [&_svg]:h-40 [&_svg]:w-40"
@@ -239,7 +254,7 @@ export default async function AdminPage({
 
                   <details className="rounded-lg">
                     <summary className="inline-flex h-9 cursor-pointer items-center rounded-xl px-3 text-sm font-medium text-stone-700 hover:bg-stone-200/70">
-                      Reset password
+                      {t.admin.resetPassword}
                     </summary>
                     <form
                       action={resetStallPassword}
@@ -251,26 +266,26 @@ export default async function AdminPage({
                         type="text"
                         minLength={8}
                         required
-                        placeholder="New password"
+                        placeholder={t.admin.newPassword}
                         className={`${field} h-10 w-48 py-1`}
                       />
                       <Button type="submit" variant="secondary" size="sm">
-                        Reset
+                        {t.admin.reset}
                       </Button>
                     </form>
                   </details>
 
                   <details className="ml-auto rounded-lg">
                     <summary className="inline-flex h-9 cursor-pointer items-center rounded-xl px-3 text-sm font-medium text-red-600 hover:bg-red-50">
-                      Delete
+                      {t.admin.delete}
                     </summary>
                     <form action={deleteStall} className="mt-2 flex items-center gap-2">
                       <input type="hidden" name="stallId" value={stall.id} />
                       <span className="text-sm text-stone-500">
-                        Deletes menu, orders and account.
+                        {t.admin.deleteHelp}
                       </span>
                       <Button type="submit" variant="danger" size="sm">
-                        Confirm delete
+                        {t.admin.confirmDelete}
                       </Button>
                     </form>
                   </details>

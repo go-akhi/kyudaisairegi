@@ -37,8 +37,15 @@ export function elapsedSeconds(from: Date | string, now: number = Date.now()): n
   return Math.max(0, Math.floor((now - started.getTime()) / 1000));
 }
 
-export function elapsedLabel(seconds: number): string {
+export function elapsedLabel(
+  seconds: number,
+  locale: "en" | "ja" = "en",
+): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
+
+  if (locale === "ja") {
+    return m > 0 ? `${m}分${s}秒` : `${s}秒`;
+  }
   return m > 0 ? `${m}m ${String(s).padStart(2, "0")}s` : `${s}s`;
 }

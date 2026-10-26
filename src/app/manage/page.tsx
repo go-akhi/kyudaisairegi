@@ -5,6 +5,8 @@ import { Badge, Button, Card, Field, TextLink, TopBar, field } from "@/component
 import { requireStall } from "@/lib/auth";
 import { requireMode } from "@/lib/device";
 import { SALE_PRESETS, yen } from "@/lib/format";
+import { fill, type Dict } from "@/lib/i18n/dictionaries";
+import { getDict } from "@/lib/i18n/locale";
 import type { MenuItem } from "@/lib/menu-types";
 import { getMenu, getStallById } from "@/lib/stalls";
 import {
@@ -18,15 +20,6 @@ import {
   updateStall,
 } from "@/lib/actions/manage";
 
-const ERRORS: Record<string, string> = {
-  name: "The stall needs a name.",
-  price: "Price must be a whole number of yen.",
-  itemname: "The item needs a name.",
-  image: "That image could not be read. Try a JPEG or PNG.",
-  category: "The category needs a name.",
-  sale: "Pick one of the discount presets.",
-};
-
 export default async function ManagePage({
   searchParams,
 }: {
@@ -34,6 +27,7 @@ export default async function ManagePage({
 }) {
   const account = await requireStall();
   const device = await requireMode("front");
+  const { t } = await getDict();
   const stall = await getStallById(account.stallId);
   if (!stall) notFound();
 
@@ -49,24 +43,27 @@ export default async function ManagePage({
   });
 
   const allItems = [...categories.flatMap((category) => category.items), ...uncategorised];
+  const errorMessage = error
+    ? (t.manage.errors as Record<string, string>)[error] ?? t.manage.errors.generic
+    : null;
 
   return (
     <>
       <TopBar
-        title="Manage"
+        title={t.manage.title}
         subtitle={`${stall.displayName} · ${device.label}`}
         right={<StaffNav mode="front" />}
       />
 
       <main className="mx-auto w-full max-w-3xl flex-1 space-y-5 px-4 py-5">
-        {error ? (
+        {errorMessage ? (
           <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-            {ERRORS[error] ?? "Something went wrong."}
+            {errorMessage}
           </p>
         ) : null}
         {saved ? (
           <p className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-800">
-            Saved.
+            {t.manage.saved}
           </p>
         ) : null}
 
@@ -74,11 +71,9 @@ export default async function ManagePage({
         <Card className="p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="font-semibold">Stall status</h2>
+              <h2 className="font-semibold">{t.manage.status}</h2>
               <p className="text-sm text-stone-500">
-                {stall.isOpen
-                  ? "Marked open on the public menu."
-                  : "Marked closed on the public menu."}
+                {stall.isOpen ? t.manage.markedOpen : t.manage.markedClosed}
               </p>
             </div>
             <form action={setOpen}>
@@ -90,22 +85,19 @@ export default async function ManagePage({
                   variant="secondary"
                   size="lg"
                 >
-                  Close the stall
+                  {t.manage.closeStall}
                 </Button>
               ) : (
                 <Button type="submit" name="isOpen" value="1" size="lg">
-                  Open the stall
+                  {t.manage.openStall}
                 </Button>
               )}
             </form>
           </div>
 
           <div className="mt-4 border-t border-stone-100 pt-4">
-            <h3 className="text-sm font-semibold">Sale</h3>
-            <p className="text-sm text-stone-500">
-              Applies to new orders only. Tickets already in the queue keep the
-              price they were placed at.
-            </p>
+            <h3 className="text-sm font-semibold">{t.manage.sale}</h3>
+            <p className="text-sm text-stone-500">{t.manage.saleHelp}</p>
             <form action={setSale} className="mt-2 flex flex-wrap gap-2">
               {SALE_PRESETS.map((pct) => (
                 <Button
@@ -116,7 +108,7 @@ export default async function ManagePage({
                   variant={stall.salePct === pct ? "primary" : "secondary"}
                   size="lg"
                 >
-                  {pct === 0 ? "No sale" : `${pct}% off`}
+                  {pct === 0 ? t.manage.noSale : fill(t.manage.pctOff, { pct })}
                 </Button>
               ))}
             </form>
@@ -124,14 +116,14 @@ export default async function ManagePage({
 
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-stone-100 pt-4">
             <div className="min-w-0">
-              <h3 className="text-sm font-semibold">Public menu</h3>
+              <h3 className="text-sm font-semibold">{t.manage.publicMenu}</h3>
               <TextLink href={`/s/${stall.slug}`} className="text-sm break-all">
                 {publicUrl}
               </TextLink>
             </div>
             <details className="text-right">
               <summary className="cursor-pointer text-sm font-medium text-stone-700">
-                Show QR
+                {t.manage.showQr}
               </summary>
               <div
                 className="mt-2 inline-block rounded-xl bg-white p-2 ring-1 ring-stone-200 [&_svg]:h-40 [&_svg]:w-40"
@@ -143,21 +135,21 @@ export default async function ManagePage({
 
         {/* -------------------------------------------------------- settings */}
         <Card className="p-4">
-          <h2 className="mb-3 font-semibold">Stall details</h2>
+          <h2 className="mb-3 font-semibold">{t.manage.details}</h2>
           <form action={updateStall} className="space-y-3" encType="multipart/form-data">
-            <Field label="Stall name">
+            <Field label={t.manage.stallName}>
               <input name="displayName" defaultValue={stall.displayName} className={field} required />
             </Field>
-            <Field label="Where to find you">
+            <Field label={t.manage.where}>
               <input
                 name="locationNote"
                 defaultValue={stall.locationNote}
-                placeholder="Building A, 2F, by the stage"
+                placeholder={t.manage.wherePlaceholder}
                 className={field}
                 maxLength={120}
               />
             </Field>
-            <Field label="Description">
+            <Field label={t.manage.description}>
               <textarea
                 name="description"
                 defaultValue={stall.description}
@@ -166,7 +158,7 @@ export default async function ManagePage({
                 maxLength={600}
               />
             </Field>
-            <Field label="Header photo" hint="Shown at the top of the public menu.">
+            <Field label={t.manage.headerPhoto} hint={t.manage.headerPhotoHint}>
               <input
                 type="file"
                 name="hero"
@@ -176,20 +168,20 @@ export default async function ManagePage({
             </Field>
             {stall.heroImage ? (
               <label className="flex items-center gap-2 text-sm text-stone-600">
-                <input type="checkbox" name="removeHero" value="1" /> Remove current
-                photo
+                <input type="checkbox" name="removeHero" value="1" />{" "}
+                {t.manage.removePhoto}
               </label>
             ) : null}
-            <Button type="submit">Save details</Button>
+            <Button type="submit">{t.manage.saveDetails}</Button>
           </form>
         </Card>
 
         {/* ------------------------------------------------------ categories */}
         <Card className="p-4">
-          <h2 className="mb-3 font-semibold">Categories</h2>
+          <h2 className="mb-3 font-semibold">{t.manage.categories}</h2>
           <div className="flex flex-wrap gap-2">
             {categories.length === 0 ? (
-              <p className="text-sm text-stone-500">No categories yet.</p>
+              <p className="text-sm text-stone-500">{t.manage.noCategories}</p>
             ) : null}
             {categories.map((category) => (
               <span
@@ -202,7 +194,7 @@ export default async function ManagePage({
                   <button
                     type="submit"
                     className="rounded-md px-2 py-0.5 text-stone-400 hover:bg-white hover:text-red-600"
-                    aria-label={`Delete ${category.name}`}
+                    aria-label={`${t.common.delete} ${category.name}`}
                   >
                     ×
                   </button>
@@ -213,32 +205,37 @@ export default async function ManagePage({
           <form action={addCategory} className="mt-3 flex gap-2">
             <input
               name="name"
-              placeholder="New category"
+              placeholder={t.manage.newCategory}
               className={field}
               maxLength={60}
               required
             />
             <Button type="submit" variant="secondary">
-              Add
+              {t.common.add}
             </Button>
           </form>
         </Card>
 
         {/* -------------------------------------------------------- new item */}
         <Card className="p-4">
-          <h2 className="mb-3 font-semibold">Add an item</h2>
-          <ItemForm categories={categories.map(({ id, name }) => ({ id, name }))} />
+          <h2 className="mb-3 font-semibold">{t.manage.addItem}</h2>
+          <ItemForm
+            categories={categories.map(({ id, name }) => ({ id, name }))}
+            t={t}
+          />
         </Card>
 
         {/* ------------------------------------------------------------ menu */}
         <Card className="p-4">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-semibold">Menu</h2>
-            <span className="text-sm text-stone-400">{allItems.length} items</span>
+            <h2 className="font-semibold">{t.manage.menu}</h2>
+            <span className="text-sm text-stone-400">
+              {fill(t.manage.itemsCount, { n: allItems.length })}
+            </span>
           </div>
 
           {allItems.length === 0 ? (
-            <p className="text-sm text-stone-500">Nothing on the menu yet.</p>
+            <p className="text-sm text-stone-500">{t.manage.nothingOnMenu}</p>
           ) : (
             <ul className="space-y-2">
               {allItems.map((item) => (
@@ -259,9 +256,9 @@ export default async function ManagePage({
                       )}
                       <span className="flex-1 font-medium">{item.name}</span>
                       {item.available ? (
-                        <Badge tone="ok">Available</Badge>
+                        <Badge tone="ok">{t.manage.available}</Badge>
                       ) : (
-                        <Badge tone="warn">Sold out</Badge>
+                        <Badge tone="warn">{t.manage.soldOut}</Badge>
                       )}
                       <span className="w-20 text-right font-semibold">
                         {yen(item.priceYen)}
@@ -272,6 +269,7 @@ export default async function ManagePage({
                       <ItemForm
                         item={item}
                         categories={categories.map(({ id, name }) => ({ id, name }))}
+                        t={t}
                       />
                       <div className="flex gap-2 border-t border-stone-200 pt-3">
                         <form action={toggleItem}>
@@ -282,13 +280,13 @@ export default async function ManagePage({
                             value={item.available ? "0" : "1"}
                           />
                           <Button type="submit" variant="secondary" size="sm">
-                            {item.available ? "Mark sold out" : "Mark available"}
+                            {item.available ? t.manage.markSoldOut : t.manage.markAvailable}
                           </Button>
                         </form>
                         <form action={deleteItem}>
                           <input type="hidden" name="itemId" value={item.id} />
                           <Button type="submit" variant="danger" size="sm">
-                            Delete
+                            {t.common.delete}
                           </Button>
                         </form>
                       </div>
@@ -307,16 +305,18 @@ export default async function ManagePage({
 function ItemForm({
   item,
   categories,
+  t,
 }: {
   item?: MenuItem;
   categories: { id: string; name: string }[];
+  t: Dict;
 }) {
   return (
     <form action={saveItem} className="space-y-3" encType="multipart/form-data">
       {item ? <input type="hidden" name="itemId" value={item.id} /> : null}
 
       <div className="grid gap-3 sm:grid-cols-[1fr_140px]">
-        <Field label="Name">
+        <Field label={t.manage.name}>
           <input
             name="name"
             defaultValue={item?.name}
@@ -325,7 +325,7 @@ function ItemForm({
             required
           />
         </Field>
-        <Field label="Price (¥)">
+        <Field label={t.manage.price}>
           <input
             name="priceYen"
             type="number"
@@ -340,13 +340,13 @@ function ItemForm({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field label="Category">
+        <Field label={t.manage.category}>
           <select
             name="categoryId"
             defaultValue={item?.categoryId ?? ""}
             className={field}
           >
-            <option value="">No category</option>
+            <option value="">{t.manage.noCategory}</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -354,7 +354,7 @@ function ItemForm({
             ))}
           </select>
         </Field>
-        <Field label="Photo">
+        <Field label={t.manage.photo}>
           <input
             type="file"
             name="image"
@@ -364,7 +364,7 @@ function ItemForm({
         </Field>
       </div>
 
-      <Field label="Description">
+      <Field label={t.manage.description}>
         <input
           name="description"
           defaultValue={item?.description}
@@ -373,10 +373,7 @@ function ItemForm({
         />
       </Field>
 
-      <Field
-        label="Options"
-        hint="One per line, e.g. “Large +100”. Leave empty for none."
-      >
+      <Field label={t.manage.options} hint={t.manage.optionsHint}>
         <textarea
           name="options"
           rows={2}
@@ -388,7 +385,7 @@ function ItemForm({
             )
             .join("\n")}
           className={field}
-          placeholder={"Large +100\nExtra sauce +50"}
+          placeholder={t.manage.optionsPlaceholder}
         />
       </Field>
 
@@ -399,17 +396,18 @@ function ItemForm({
           defaultChecked={item ? item.available : true}
           className="h-4 w-4"
         />
-        Available to order
+        {t.manage.availableToOrder}
       </label>
 
       {item?.imagePath ? (
         <label className="flex items-center gap-2 text-sm text-stone-600">
-          <input type="checkbox" name="removeImage" value="1" /> Remove current photo
+          <input type="checkbox" name="removeImage" value="1" />{" "}
+          {t.manage.removePhoto}
         </label>
       ) : null}
 
       <Button type="submit" variant={item ? "secondary" : "primary"}>
-        {item ? "Save item" : "Add item"}
+        {item ? t.manage.saveItem : t.manage.addItemBtn}
       </Button>
     </form>
   );

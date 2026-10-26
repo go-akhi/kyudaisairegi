@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Badge, Card } from "@/components/ui";
 import { unitSalePrice, yen } from "@/lib/format";
+import { fill } from "@/lib/i18n/dictionaries";
+import { getDict } from "@/lib/i18n/locale";
 import { getMenu, getStallBySlug } from "@/lib/stalls";
 
 // Fresh enough for a sale or sold-out toggle, cached enough to survive a blip.
@@ -13,7 +16,10 @@ export default async function StallMenuPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const stall = await getStallBySlug(slug);
+  const [{ locale, t }, stall] = await Promise.all([
+    getDict(),
+    getStallBySlug(slug),
+  ]);
   if (!stall) notFound();
 
   const { categories, uncategorised } = await getMenu(stall.id, {
@@ -23,7 +29,7 @@ export default async function StallMenuPage({
   const sections = [
     ...categories.filter((category) => category.items.length > 0),
     ...(uncategorised.length > 0
-      ? [{ id: "other", name: "Other", items: uncategorised }]
+      ? [{ id: "other", name: t.manage.noCategory, items: uncategorised }]
       : []),
   ];
 
@@ -44,8 +50,15 @@ export default async function StallMenuPage({
           href="/"
           className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-sm font-medium text-stone-900 backdrop-blur"
         >
-          ← All stalls
+          ← {t.menu.backToStalls}
         </Link>
+        <div className="absolute top-2 right-2 rounded-full bg-white/90 backdrop-blur">
+          <LocaleSwitcher
+            current={locale}
+            other={t.locale.other}
+            label={t.locale.label}
+          />
+        </div>
       </div>
 
       <header className="relative z-10 -mt-8 px-5">
@@ -54,7 +67,11 @@ export default async function StallMenuPage({
             <h1 className="text-2xl font-semibold tracking-tight">
               {stall.displayName}
             </h1>
-            {stall.isOpen ? <Badge tone="ok">Open</Badge> : <Badge>Closed</Badge>}
+            {stall.isOpen ? (
+              <Badge tone="ok">{t.common.open}</Badge>
+            ) : (
+              <Badge>{t.common.closed}</Badge>
+            )}
           </div>
           {stall.locationNote ? (
             <p className="mt-1 text-sm text-stone-500">{stall.locationNote}</p>
@@ -70,22 +87,22 @@ export default async function StallMenuPage({
       {stall.salePct > 0 ? (
         <div className="mx-5 mt-4 rounded-xl bg-orange-700 px-4 py-3 text-center text-white">
           <p className="text-lg font-semibold">
-            {stall.salePct}% off everything
+            {fill(t.menu.saleBanner, { pct: stall.salePct })}
           </p>
-          <p className="text-xs text-orange-100">While it lasts — today only.</p>
+          <p className="text-xs text-orange-100">{t.menu.saleNote}</p>
         </div>
       ) : null}
 
       {!stall.isOpen ? (
         <div className="mx-5 mt-4 rounded-xl bg-stone-200 px-4 py-3 text-center text-sm text-stone-700">
-          This stall is closed right now.
+          {t.menu.closedNow}
         </div>
       ) : null}
 
       <div className="mt-6 space-y-8 px-5">
         {sections.length === 0 ? (
           <p className="py-12 text-center text-sm text-stone-500">
-            The menu isn&apos;t up yet.
+            {t.menu.menuNotUp}
           </p>
         ) : null}
 
@@ -136,7 +153,7 @@ export default async function StallMenuPage({
       </div>
 
       <footer className="mt-10 px-5 text-center text-xs text-stone-400">
-        Order and pay in cash at the counter.
+        {t.menu.orderAtCounter}
       </footer>
     </main>
   );
