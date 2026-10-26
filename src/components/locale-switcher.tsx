@@ -31,7 +31,7 @@ export function LocaleSwitcher({
       disabled={pending}
       aria-label={label}
       onClick={() => switchTo(current === "ja" ? "en" : "ja")}
-      className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-200/70 disabled:opacity-50"
+      className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-[#6b5544] hover:bg-[#f4ecdd] disabled:opacity-50"
     >
       {other}
     </button>

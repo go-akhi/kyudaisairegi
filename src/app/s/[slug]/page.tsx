@@ -35,7 +35,7 @@ export default async function StallMenuPage({
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 pb-16">
-      <div className="relative aspect-[16/9] w-full bg-stone-200">
+      <div className="relative aspect-[16/9] w-full bg-[#eadfcc]">
         {stall.heroImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -48,7 +48,7 @@ export default async function StallMenuPage({
         )}
         <Link
           href="/stalls"
-          className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-sm font-medium text-stone-900 backdrop-blur"
+          className="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-sm font-medium text-[#402000] backdrop-blur"
         >
           ← {t.menu.backToStalls}
         </Link>
@@ -74,10 +74,10 @@ export default async function StallMenuPage({
             )}
           </div>
           {stall.locationNote ? (
-            <p className="mt-1 text-sm text-stone-500">{stall.locationNote}</p>
+            <p className="mt-1 text-sm text-[#856f58]">{stall.locationNote}</p>
           ) : null}
           {stall.description ? (
-            <p className="mt-3 text-[15px] leading-relaxed text-stone-700">
+            <p className="mt-3 text-[15px] leading-relaxed text-[#614b37]">
               {stall.description}
             </p>
           ) : null}
@@ -85,30 +85,30 @@ export default async function StallMenuPage({
       </header>
 
       {stall.salePct > 0 ? (
-        <div className="mx-5 mt-4 rounded-xl bg-orange-700 px-4 py-3 text-center text-white">
+        <div className="mx-5 mt-4 rounded-lg bg-[#fff080] px-4 py-3 text-center text-[#402000]">
           <p className="text-lg font-semibold">
             {fill(t.menu.saleBanner, { pct: stall.salePct })}
           </p>
-          <p className="text-xs text-orange-100">{t.menu.saleNote}</p>
+          <p className="text-xs text-[#7a5300]">{t.menu.saleNote}</p>
         </div>
       ) : null}
 
       {!stall.isOpen ? (
-        <div className="mx-5 mt-4 rounded-xl bg-stone-200 px-4 py-3 text-center text-sm text-stone-700">
+        <div className="mx-5 mt-4 rounded-lg bg-[#eadfcc] px-4 py-3 text-center text-sm text-[#614b37]">
           {t.menu.closedNow}
         </div>
       ) : null}
 
       <div className="mt-6 space-y-8 px-5">
         {sections.length === 0 ? (
-          <p className="py-12 text-center text-sm text-stone-500">
+          <p className="py-12 text-center text-sm text-[#856f58]">
             {t.menu.menuNotUp}
           </p>
         ) : null}
 
         {sections.map((section) => (
           <section key={section.id}>
-            <h2 className="mb-3 text-xs font-semibold tracking-widest text-stone-500 uppercase">
+            <h2 className="mb-3 text-xs font-semibold tracking-widest text-[#856f58] uppercase">
               {section.name}
             </h2>
             <ul className="space-y-3">
@@ -124,20 +124,20 @@ export default async function StallMenuPage({
                         <img
                           src={`/media/${item.imagePath}`}
                           alt=""
-                          className="h-20 w-20 shrink-0 rounded-xl object-cover"
+                          className="h-20 w-20 shrink-0 rounded-lg object-cover"
                         />
                       ) : null}
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold">{item.name}</p>
                         {item.description ? (
-                          <p className="mt-0.5 text-sm leading-snug text-stone-500">
+                          <p className="mt-0.5 text-sm leading-snug text-[#856f58]">
                             {item.description}
                           </p>
                         ) : null}
                         <p className="mt-1.5 flex items-baseline gap-2">
                           <span className="font-semibold">{yen(salePrice)}</span>
                           {onSale ? (
-                            <span className="text-sm text-stone-400 line-through">
+                            <span className="text-sm text-[#a08a72] line-through">
                               {yen(item.priceYen)}
                             </span>
                           ) : null}
@@ -152,7 +152,7 @@ export default async function StallMenuPage({
         ))}
       </div>
 
-      <footer className="mt-10 px-5 text-center text-xs text-stone-400">
+      <footer className="mt-10 px-5 text-center text-xs text-[#a08a72]">
         {t.menu.orderAtCounter}
       </footer>
     </main>

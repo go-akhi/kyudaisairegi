@@ -10,12 +10,12 @@ type ButtonVariant = "primary" | "secondary" | "danger" | "ghost" | "ok";
 type ButtonSize = "sm" | "md" | "lg";
 
 const BUTTON_VARIANT: Record<ButtonVariant, string> = {
-  primary: "bg-stone-900 text-white hover:bg-stone-800 active:bg-stone-950",
-  ok: "bg-green-700 text-white hover:bg-green-800 active:bg-green-900",
+  primary: "bg-[#993333] text-[#fffef6] hover:bg-[#7c2828] active:bg-[#6b2222]",
+  ok: "bg-[#1b6373] text-[#fffef6] hover:bg-[#15505e] active:bg-[#10414d]",
   secondary:
-    "bg-white text-stone-900 ring-1 ring-stone-300 hover:bg-stone-50 active:bg-stone-100",
-  danger: "bg-red-600 text-white hover:bg-red-700 active:bg-red-800",
-  ghost: "text-stone-700 hover:bg-stone-200/70 active:bg-stone-200",
+    "bg-white text-[#402000] ring-1 ring-[#d9cbb4] hover:bg-[#fbf6ea] active:bg-[#f4ecdd]",
+  danger: "bg-[#b3261e] text-[#fffef6] hover:bg-[#9a201a] active:bg-[#841b16]",
+  ghost: "text-[#614b37] hover:bg-[#f4ecdd] active:bg-[#e0d4bf]",
 };
 
 const BUTTON_SIZE: Record<ButtonSize, string> = {
@@ -34,7 +34,7 @@ export function Button({
     <button
       {...props}
       className={cx(
-        "inline-flex items-center justify-center gap-2 rounded-xl font-medium",
+        "inline-flex items-center justify-center gap-2 rounded-md font-medium",
         "transition-colors select-none disabled:pointer-events-none disabled:opacity-40",
         BUTTON_VARIANT[variant],
         BUTTON_SIZE[size],
@@ -47,8 +47,8 @@ export function Button({
 /* -------------------------------------------------------------------- form */
 
 export const field =
-  "w-full rounded-xl border border-stone-300 bg-white px-3 py-2.5 text-base text-stone-900 " +
-  "placeholder:text-stone-400 focus:border-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-900/10";
+  "w-full rounded-md border border-[#d9cbb4] bg-white px-3 py-2.5 text-base text-[#402000] " +
+  "placeholder:text-[#a08a72] focus:border-[#993333] focus:outline-none focus:ring-2 focus:ring-[#993333]/10";
 
 export function Field({
   label,
@@ -61,9 +61,9 @@ export function Field({
 }) {
   return (
     <label className="block space-y-1.5">
-      <span className="block text-sm font-medium text-stone-700">{label}</span>
+      <span className="block text-sm font-medium text-[#614b37]">{label}</span>
       {children}
-      {hint ? <span className="block text-xs text-stone-500">{hint}</span> : null}
+      {hint ? <span className="block text-xs text-[#856f58]">{hint}</span> : null}
     </label>
   );
 }
@@ -78,7 +78,7 @@ export function Card({
   children: ReactNode;
 }) {
   return (
-    <div className={cx("rounded-2xl bg-white ring-1 ring-stone-200/80", className)}>
+    <div className={cx("rounded-lg bg-white ring-1 ring-[#e7dcc7]/80", className)}>
       {children}
     </div>
   );
@@ -94,10 +94,10 @@ export function Badge({
   children: ReactNode;
 }) {
   const tones = {
-    neutral: "bg-stone-100 text-stone-600",
-    ok: "bg-green-100 text-green-800",
-    warn: "bg-amber-100 text-amber-900",
-    danger: "bg-red-100 text-red-800",
+    neutral: "bg-[#f4ecdd] text-[#6b5544]",
+    ok: "bg-[#e3ecec] text-[#15505e]",
+    warn: "bg-[#fff3c9] text-[#6b4a00]",
+    danger: "bg-[#f7e4df] text-[#7f241b]",
   };
   return (
     <span
@@ -121,12 +121,12 @@ export function TopBar({
   right?: ReactNode;
 }) {
   return (
-    <header className="sticky top-0 z-20 border-b border-stone-200 bg-paper/95 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-[#e7dcc7] bg-paper/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3">
         <div className="min-w-0 flex-1">
           <h1 className="truncate text-lg font-semibold tracking-tight">{title}</h1>
           {subtitle ? (
-            <p className="truncate text-xs text-stone-500">{subtitle}</p>
+            <p className="truncate text-xs text-[#856f58]">{subtitle}</p>
           ) : null}
         </div>
         {right}
@@ -137,7 +137,7 @@ export function TopBar({
 
 export function Empty({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-dashed border-stone-300 px-6 py-12 text-center text-sm text-stone-500">
+    <div className="rounded-lg border border-dashed border-[#d9cbb4] px-6 py-12 text-center text-sm text-[#856f58]">
       {children}
     </div>
   );
@@ -156,7 +156,7 @@ export function TextLink({
     <Link
       href={href}
       className={cx(
-        "font-medium text-stone-900 underline decoration-stone-300 underline-offset-4 hover:decoration-stone-900",
+        "font-medium text-[#402000] underline decoration-[#e7dcc7] underline-offset-4 hover:decoration-[#993333]",
         className,
       )}
     >

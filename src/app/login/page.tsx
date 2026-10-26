@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Button, Card, Field, field } from "@/components/ui";
 import { login } from "@/lib/actions/auth";
@@ -22,11 +23,14 @@ export default async function LoginPage({
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-5 py-10">
       <div className="mb-8">
-        <p className="text-sm font-semibold tracking-widest text-orange-700 uppercase">
-          {t.login.eyebrow}
-        </p>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">{t.login.title}</h1>
-        <p className="mt-1 text-sm text-stone-500">{t.login.subtitle}</p>
+        <div className="flex items-center gap-2.5">
+          <BrandMark className="h-8 w-8" />
+          <p className="text-sm font-semibold tracking-widest text-[#993333] uppercase">
+            {t.login.eyebrow}
+          </p>
+        </div>
+        <h1 className="mt-3 text-2xl font-semibold tracking-tight">{t.login.title}</h1>
+        <p className="mt-1 text-sm text-[#856f58]">{t.login.subtitle}</p>
       </div>
 
       <Card className="p-5">
@@ -52,7 +56,7 @@ export default async function LoginPage({
           </Field>
 
           {message ? (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+            <p className="rounded-lg bg-[#f9e7e2] px-3 py-2 text-sm text-[#8f2a20]">
               {message}
             </p>
           ) : null}
@@ -63,7 +67,7 @@ export default async function LoginPage({
         </form>
       </Card>
 
-      <p className="mt-6 text-center text-xs text-stone-400">{t.login.hint}</p>
+      <p className="mt-6 text-center text-xs text-[#a08a72]">{t.login.hint}</p>
 
       <div className="mt-4 flex justify-center">
         <LocaleSwitcher

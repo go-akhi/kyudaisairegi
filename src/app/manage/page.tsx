@@ -57,12 +57,12 @@ export default async function ManagePage({
 
       <main className="mx-auto w-full max-w-3xl flex-1 space-y-5 px-4 py-5">
         {errorMessage ? (
-          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+          <p className="rounded-lg bg-[#f9e7e2] px-4 py-3 text-sm text-[#8f2a20]">
             {errorMessage}
           </p>
         ) : null}
         {saved ? (
-          <p className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-800">
+          <p className="rounded-lg bg-[#eef4f4] px-4 py-3 text-sm text-[#15505e]">
             {t.manage.saved}
           </p>
         ) : null}
@@ -72,7 +72,7 @@ export default async function ManagePage({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="font-semibold">{t.manage.status}</h2>
-              <p className="text-sm text-stone-500">
+              <p className="text-sm text-[#856f58]">
                 {stall.isOpen ? t.manage.markedOpen : t.manage.markedClosed}
               </p>
             </div>
@@ -95,9 +95,9 @@ export default async function ManagePage({
             </form>
           </div>
 
-          <div className="mt-4 border-t border-stone-100 pt-4">
+          <div className="mt-4 border-t border-[#efe5d4] pt-4">
             <h3 className="text-sm font-semibold">{t.manage.sale}</h3>
-            <p className="text-sm text-stone-500">{t.manage.saleHelp}</p>
+            <p className="text-sm text-[#856f58]">{t.manage.saleHelp}</p>
             <form action={setSale} className="mt-2 flex flex-wrap gap-2">
               {SALE_PRESETS.map((pct) => (
                 <Button
@@ -114,7 +114,7 @@ export default async function ManagePage({
             </form>
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-stone-100 pt-4">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[#efe5d4] pt-4">
             <div className="min-w-0">
               <h3 className="text-sm font-semibold">{t.manage.publicMenu}</h3>
               <TextLink href={`/s/${stall.slug}`} className="text-sm break-all">
@@ -122,11 +122,11 @@ export default async function ManagePage({
               </TextLink>
             </div>
             <details className="text-right">
-              <summary className="cursor-pointer text-sm font-medium text-stone-700">
+              <summary className="cursor-pointer text-sm font-medium text-[#614b37]">
                 {t.manage.showQr}
               </summary>
               <div
-                className="mt-2 inline-block rounded-xl bg-white p-2 ring-1 ring-stone-200 [&_svg]:h-40 [&_svg]:w-40"
+                className="mt-2 inline-block rounded-lg bg-white p-2 ring-1 ring-[#e7dcc7] [&_svg]:h-40 [&_svg]:w-40"
                 dangerouslySetInnerHTML={{ __html: qr }}
               />
             </details>
@@ -163,11 +163,11 @@ export default async function ManagePage({
                 type="file"
                 name="hero"
                 accept="image/*"
-                className="block w-full text-sm text-stone-600 file:mr-3 file:rounded-lg file:border-0 file:bg-stone-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white"
+                className="block w-full text-sm text-[#6b5544] file:mr-3 file:rounded-lg file:border-0 file:bg-[#402000] file:px-3 file:py-2 file:text-sm file:font-medium file:text-[#fffef6]"
               />
             </Field>
             {stall.heroImage ? (
-              <label className="flex items-center gap-2 text-sm text-stone-600">
+              <label className="flex items-center gap-2 text-sm text-[#6b5544]">
                 <input type="checkbox" name="removeHero" value="1" />{" "}
                 {t.manage.removePhoto}
               </label>
@@ -181,19 +181,19 @@ export default async function ManagePage({
           <h2 className="mb-3 font-semibold">{t.manage.categories}</h2>
           <div className="flex flex-wrap gap-2">
             {categories.length === 0 ? (
-              <p className="text-sm text-stone-500">{t.manage.noCategories}</p>
+              <p className="text-sm text-[#856f58]">{t.manage.noCategories}</p>
             ) : null}
             {categories.map((category) => (
               <span
                 key={category.id}
-                className="inline-flex items-center gap-1 rounded-lg bg-stone-100 py-1 pr-1 pl-3 text-sm"
+                className="inline-flex items-center gap-1 rounded-lg bg-[#f4ecdd] py-1 pr-1 pl-3 text-sm"
               >
                 {category.name}
                 <form action={deleteCategory}>
                   <input type="hidden" name="categoryId" value={category.id} />
                   <button
                     type="submit"
-                    className="rounded-md px-2 py-0.5 text-stone-400 hover:bg-white hover:text-red-600"
+                    className="rounded-md px-2 py-0.5 text-[#a08a72] hover:bg-white hover:text-[#b3261e]"
                     aria-label={`${t.common.delete} ${category.name}`}
                   >
                     ×
@@ -229,18 +229,18 @@ export default async function ManagePage({
         <Card className="p-4">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-semibold">{t.manage.menu}</h2>
-            <span className="text-sm text-stone-400">
+            <span className="text-sm text-[#a08a72]">
               {fill(t.manage.itemsCount, { n: allItems.length })}
             </span>
           </div>
 
           {allItems.length === 0 ? (
-            <p className="text-sm text-stone-500">{t.manage.nothingOnMenu}</p>
+            <p className="text-sm text-[#856f58]">{t.manage.nothingOnMenu}</p>
           ) : (
             <ul className="space-y-2">
               {allItems.map((item) => (
                 <li key={item.id}>
-                  <details className="rounded-xl bg-stone-50 p-3">
+                  <details className="rounded-lg bg-[#fbf6ea] p-3">
                     <summary className="flex cursor-pointer items-center gap-3">
                       {item.imagePath ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -250,7 +250,7 @@ export default async function ManagePage({
                           className="h-10 w-10 rounded-lg object-cover"
                         />
                       ) : (
-                        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-stone-200 text-stone-400">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#eadfcc] text-[#a08a72]">
                           ·
                         </span>
                       )}
@@ -271,7 +271,7 @@ export default async function ManagePage({
                         categories={categories.map(({ id, name }) => ({ id, name }))}
                         t={t}
                       />
-                      <div className="flex gap-2 border-t border-stone-200 pt-3">
+                      <div className="flex gap-2 border-t border-[#e7dcc7] pt-3">
                         <form action={toggleItem}>
                           <input type="hidden" name="itemId" value={item.id} />
                           <input
@@ -359,7 +359,7 @@ function ItemForm({
             type="file"
             name="image"
             accept="image/*"
-            className="block w-full pt-1 text-sm text-stone-600 file:mr-3 file:rounded-lg file:border-0 file:bg-stone-900 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white"
+            className="block w-full pt-1 text-sm text-[#6b5544] file:mr-3 file:rounded-lg file:border-0 file:bg-[#402000] file:px-3 file:py-2 file:text-sm file:font-medium file:text-[#fffef6]"
           />
         </Field>
       </div>
@@ -389,7 +389,7 @@ function ItemForm({
         />
       </Field>
 
-      <label className="flex items-center gap-2 text-sm text-stone-700">
+      <label className="flex items-center gap-2 text-sm text-[#614b37]">
         <input
           type="checkbox"
           name="available"
@@ -400,7 +400,7 @@ function ItemForm({
       </label>
 
       {item?.imagePath ? (
-        <label className="flex items-center gap-2 text-sm text-stone-600">
+        <label className="flex items-center gap-2 text-sm text-[#6b5544]">
           <input type="checkbox" name="removeImage" value="1" />{" "}
           {t.manage.removePhoto}
         </label>

@@ -80,7 +80,7 @@ try {
     "calculator state is cleared after the order",
     (await cashCalc.locator("[data-cash-received]").innerText()) === "¥0",
   );
-  const numberText = await front.page.locator("text=/^#\\d+$/").first().innerText();
+  const numberText = await front.page.locator("[data-placed-number]").innerText();
   const orderNumber = Number(numberText.replace("#", ""));
   check(`order placed with a number (${numberText})`, orderNumber > 0);
 

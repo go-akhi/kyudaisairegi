@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { BrandMark } from "@/components/brand-mark";
 import { CheckIcon, HandoverMockup, KitchenMockup, MenuMockup, PhoneMockup, TillMockup } from "@/components/landing/mockups";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { getDict } from "@/lib/i18n/locale";
@@ -34,20 +35,6 @@ const linkButton =
 
 const eyebrowClass =
   "text-[13px] font-semibold tracking-[0.08em] text-festival-red uppercase";
-
-function ReceiptIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden>
-      <path
-        d="M5 2.5h10v15l-2.5-1.6L10 17.5l-2.5-1.6L5 17.5v-15Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-      <path d="M7.5 6.5h5M7.5 9.5h5M7.5 12.5h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 function ArrowRight({ className }: { className?: string }) {
   return (
@@ -130,14 +117,12 @@ export default async function LandingPage() {
   ];
 
   return (
-    <div className="font-landing min-h-screen bg-festival-cream text-festival-ink">
+    <div className="min-h-screen bg-festival-cream text-festival-ink">
       {/* ------------------------------------------------------------- nav */}
       <header className="sticky top-0 z-50 border-b border-festival-line bg-festival-cream/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-2 px-5 lg:px-10">
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
-            <span className="grid h-7 w-7 place-items-center rounded-[4px] bg-festival-red text-festival-cream">
-              <ReceiptIcon className="h-4 w-4" />
-            </span>
+            <BrandMark className="h-7 w-7" />
             <span className="text-[15px] font-semibold tracking-tight">{landing.brand}</span>
           </Link>
 
@@ -437,9 +422,7 @@ export default async function LandingPage() {
         <div className="mx-auto grid max-w-[1400px] gap-8 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="grid h-7 w-7 place-items-center rounded-[4px] bg-festival-red text-festival-cream">
-                <ReceiptIcon className="h-4 w-4" />
-              </span>
+              <BrandMark className="h-7 w-7" />
               <span className="text-[15px] font-semibold tracking-tight">{landing.brand}</span>
             </div>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-festival-muted">

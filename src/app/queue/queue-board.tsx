@@ -12,9 +12,9 @@ import { Badge, Button, Card, Empty } from "@/components/ui";
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 function urgency(seconds: number) {
-  if (seconds >= 600) return "bg-red-50 ring-red-300";
-  if (seconds >= 300) return "bg-amber-50 ring-amber-300";
-  return "bg-white ring-stone-200";
+  if (seconds >= 600) return "bg-[#f9e7e2] ring-[#d9a79d]";
+  if (seconds >= 300) return "bg-[#fff9e6] ring-[#e0b84d]";
+  return "bg-white ring-[#e7dcc7]";
 }
 
 export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
@@ -54,10 +54,10 @@ export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
     <div className="space-y-8">
       <section>
         <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="text-sm font-semibold tracking-widest text-stone-500 uppercase">
+          <h2 className="text-sm font-semibold tracking-widest text-[#856f58] uppercase">
             {t.queue.preparing}
           </h2>
-          <span className="text-sm text-stone-400">
+          <span className="text-sm text-[#a08a72]">
             {fill(t.queue.openCount, { n: preparing.length })}
           </span>
         </div>
@@ -81,23 +81,23 @@ export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
                                 part: order.part,
                                 parts: order.parts,
                               })}
-                              className="rounded-md bg-amber-100 px-2 py-1 text-sm font-semibold text-amber-900 tabular-nums"
+                              className="rounded-md bg-[#fff3c9] px-2 py-1 text-sm font-semibold text-[#6b4a00] tabular-nums"
                             >
                               {order.part}/{order.parts}
                             </span>
                           ) : null}
                         </p>
-                        <p className="mt-1 text-sm text-stone-500">
+                        <p className="mt-1 text-sm text-[#856f58]">
                           {order.customerName || t.common.noName}
                         </p>
                       </div>
                       <span
                         className={`rounded-md px-2 py-1 text-sm font-semibold tabular-nums ${
                           waited >= 600
-                            ? "bg-red-600 text-white"
+                            ? "bg-[#b3261e] text-[#fffef6]"
                             : waited >= 300
-                              ? "bg-amber-500 text-white"
-                              : "bg-stone-100 text-stone-700"
+                              ? "bg-[#fff9e6]0 text-[#fffef6]"
+                              : "bg-[#f4ecdd] text-[#614b37]"
                         }`}
                       >
                         {elapsedLabel(waited, locale)}
@@ -110,7 +110,7 @@ export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
                           <span className="font-semibold">{item.qty}×</span>{" "}
                           {item.name}
                           {item.options.length > 0 ? (
-                            <span className="text-stone-500">
+                            <span className="text-[#856f58]">
                               {" "}
                               ({item.options.map((option) => option.name).join(", ")})
                             </span>
@@ -120,7 +120,7 @@ export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
                     </ul>
 
                     {order.note ? (
-                      <p className="mt-2 rounded-lg bg-amber-100 px-2 py-1 text-sm font-medium text-amber-900">
+                      <p className="mt-2 rounded-lg bg-[#fff3c9] px-2 py-1 text-sm font-medium text-[#6b4a00]">
                         {order.note}
                       </p>
                     ) : null}
@@ -137,7 +137,7 @@ export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
                       </Button>
                       <button
                         onClick={() => cancel(order)}
-                        className="h-14 px-3 text-sm text-stone-400 hover:text-red-600"
+                        className="h-14 px-3 text-sm text-[#a08a72] hover:text-[#b3261e]"
                       >
                         {t.queue.cancelAction}
                       </button>
@@ -152,16 +152,16 @@ export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
 
       <section>
         <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="text-sm font-semibold tracking-widest text-stone-500 uppercase">
+          <h2 className="text-sm font-semibold tracking-widest text-[#856f58] uppercase">
             {t.queue.waitingCounter}
           </h2>
-          <span className="text-sm text-stone-400">
+          <span className="text-sm text-[#a08a72]">
             {fill(t.queue.readyCount, { n: ready.length })}
           </span>
         </div>
 
         {ready.length === 0 ? (
-          <p className="text-sm text-stone-400">{t.queue.nothingWaiting}</p>
+          <p className="text-sm text-[#a08a72]">{t.queue.nothingWaiting}</p>
         ) : (
           <ul className="flex flex-wrap gap-2">
             {ready.map((order) => {
@@ -170,19 +170,19 @@ export function QueueBoard({ locale, t }: { locale: Locale; t: Dict }) {
               return (
                 <li key={order.id}>
                   <div
-                    className={`flex items-center gap-3 rounded-xl px-3 py-2 ring-1 ${
-                      slow ? "bg-red-50 ring-red-300" : "bg-green-50 ring-green-200"
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2 ring-1 ${
+                      slow ? "bg-[#f9e7e2] ring-[#d9a79d]" : "bg-[#eef4f4] ring-[#bcd2d6]"
                     }`}
                   >
                     <span className="text-xl font-bold">
                       #{order.number}
                       {order.parts > 1 ? (
-                        <span className="ml-1 align-middle text-xs font-semibold text-amber-800 tabular-nums">
+                        <span className="ml-1 align-middle text-xs font-semibold text-[#7a5300] tabular-nums">
                           {order.part}/{order.parts}
                         </span>
                       ) : null}
                     </span>
-                    <span className="text-sm text-stone-500">
+                    <span className="text-sm text-[#856f58]">
                       {order.customerName || t.common.noName}
                     </span>
                     <Badge tone={slow ? "danger" : "ok"}>

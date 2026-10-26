@@ -96,6 +96,9 @@ docker compose exec -T db pg_dump -U kyudaisai kyudaisai | gzip > backup-$(date 
 
 ## Design decisions worth keeping
 
+- **One palette everywhere.** Cream `#fffef6`, deep red `#993333`, gold
+  `#fff080` and teal `#1b6373` come from the 九大祭 site; the landing page, staff
+  screens and public menu all use them.
 - **Discounts are frozen on the order.** `orders.discount_pct/yen` are written at
   creation; changing the sale never rewrites a ticket that is already in the
   queue. Discounts are computed per line and summed so the ticket always adds up.

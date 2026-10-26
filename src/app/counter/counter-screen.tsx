@@ -204,7 +204,7 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
 
           {sections.map((section) => (
             <section key={section.id}>
-              <h2 className="mb-2 text-xs font-semibold tracking-widest text-stone-500 uppercase">
+              <h2 className="mb-2 text-xs font-semibold tracking-widest text-[#856f58] uppercase">
                 {section.name}
               </h2>
               <div className="grid gap-2 sm:grid-cols-2">
@@ -220,8 +220,8 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
                           if (item.options.length === 0) add(item, []);
                           else setExpanded(isOpen ? null : item.id);
                         }}
-                        className={`w-full rounded-2xl bg-white p-3 text-left ring-1 transition ${
-                          isOpen ? "ring-2 ring-stone-900" : "ring-stone-200 hover:ring-stone-400"
+                        className={`w-full rounded-lg bg-white p-3 text-left ring-1 transition ${
+                          isOpen ? "ring-2 ring-[#993333]" : "ring-[#e7dcc7] hover:ring-[#c7b299]"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2">
@@ -229,7 +229,7 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
                           <span className="shrink-0 font-semibold">{yen(price)}</span>
                         </div>
                         {item.options.length > 0 ? (
-                          <span className="mt-1 block text-xs text-stone-500">
+                          <span className="mt-1 block text-xs text-[#856f58]">
                             {item.options.length === 1
                               ? fill(t.counter.optionCount, { n: 1 })
                               : fill(t.counter.optionCountPlural, {
@@ -240,7 +240,7 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
                       </button>
 
                       {isOpen ? (
-                        <div className="mt-1 rounded-2xl bg-stone-100 p-3">
+                        <div className="mt-1 rounded-lg bg-[#f4ecdd] p-3">
                           <div className="flex flex-wrap gap-2">
                             {item.options.map((option) => {
                               const active = chosen.includes(option.id);
@@ -257,8 +257,8 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
                                   }
                                   className={`h-10 rounded-lg px-3 text-sm font-medium ${
                                     active
-                                      ? "bg-stone-900 text-white"
-                                      : "bg-white text-stone-800 ring-1 ring-stone-300"
+                                      ? "bg-[#402000] text-[#fffef6]"
+                                      : "bg-white text-[#4b2f19] ring-1 ring-[#d9cbb4]"
                                   }`}
                                 >
                                   {option.name}
@@ -314,11 +314,13 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
 
           <Card className="p-4">
             {placed ? (
-              <div className="mb-4 rounded-xl bg-green-700 px-4 py-4 text-white">
+              <div className="mb-4 rounded-lg bg-[#1b6373] px-4 py-4 text-[#fffef6]">
                 <p className="text-xs tracking-widest uppercase opacity-80">
                   {t.counter.orderPlaced}
                 </p>
-                <p className="text-4xl font-bold">#{placed.number}</p>
+                <p data-placed-number className="text-4xl font-bold">
+                  #{placed.number}
+                </p>
                 <p className="mt-1 text-sm">
                   {fill(t.counter.collectCash, { total: yen(placed.total) })}
                 </p>
@@ -338,11 +340,11 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
             <h2 className="mb-2 font-semibold">{t.counter.order}</h2>
 
             {lines.length === 0 ? (
-              <p className="py-6 text-center text-sm text-stone-400">
+              <p className="py-6 text-center text-sm text-[#a08a72]">
                 {t.counter.tapItems}
               </p>
             ) : (
-              <ul className="divide-y divide-stone-100">
+              <ul className="divide-y divide-[#efe5d4]">
                 {lines.map(([key, line]) => {
                   const item = itemById.get(line.itemId);
                   if (!item) return null;
@@ -357,11 +359,11 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
                           {item.name}
                         </p>
                         {chosen.length > 0 ? (
-                          <p className="text-xs text-stone-500">
+                          <p className="text-xs text-[#856f58]">
                             {chosen.map((option) => option.name).join(", ")}
                           </p>
                         ) : null}
-                        <p className="text-xs text-stone-500">
+                        <p className="text-xs text-[#856f58]">
                           {fill(t.counter.each, {
                             price: yen(unitSalePrice(unitPrice(line), salePct)),
                           })}
@@ -370,7 +372,7 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => bump(key, -1)}
-                          className="h-8 w-8 rounded-lg bg-stone-100 text-lg leading-none"
+                          className="h-8 w-8 rounded-lg bg-[#f4ecdd] text-lg leading-none"
                           aria-label={t.counter.removeOne}
                         >
                           −
@@ -380,7 +382,7 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
                         </span>
                         <button
                           onClick={() => bump(key, 1)}
-                          className="h-8 w-8 rounded-lg bg-stone-100 text-lg leading-none"
+                          className="h-8 w-8 rounded-lg bg-[#f4ecdd] text-lg leading-none"
                           aria-label={t.counter.addOne}
                         >
                           +
@@ -395,14 +397,14 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
               </ul>
             )}
 
-            <div className="mt-3 space-y-1 border-t border-stone-200 pt-3 text-sm">
+            <div className="mt-3 space-y-1 border-t border-[#e7dcc7] pt-3 text-sm">
               {salePct > 0 && gross > 0 ? (
                 <>
-                  <div className="flex justify-between text-stone-500">
+                  <div className="flex justify-between text-[#856f58]">
                     <span>{t.counter.subtotal}</span>
                     <span>{yen(gross)}</span>
                   </div>
-                  <div className="flex justify-between text-orange-700">
+                  <div className="flex justify-between text-[#993333]">
                     <span>{fill(t.counter.off, { pct: salePct })}</span>
                     <span>−{yen(gross - total)}</span>
                   </div>
@@ -432,13 +434,13 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
             </div>
 
             {error ? (
-              <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+              <p className="mt-2 rounded-lg bg-[#f9e7e2] px-3 py-2 text-sm text-[#8f2a20]">
                 {error}
               </p>
             ) : null}
 
             {notice ? (
-              <p className="mt-2 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-800">
+              <p className="mt-2 rounded-lg bg-[#eef4f4] px-3 py-2 text-sm text-[#15505e]">
                 {notice}
               </p>
             ) : null}
@@ -514,9 +516,9 @@ function CashCalculator({
       >
         <span className="font-semibold">{t.counter.cashCalc}</span>
         <span className="flex items-center gap-2">
-          <span className="text-xs text-stone-400">
+          <span className="text-xs text-[#a08a72]">
             {t.counter.total}{" "}
-            <span className="font-semibold text-stone-600 tabular-nums">
+            <span className="font-semibold text-[#6b5544] tabular-nums">
               {yen(total)}
             </span>
           </span>
@@ -524,7 +526,7 @@ function CashCalculator({
             viewBox="0 0 16 16"
             fill="none"
             aria-hidden
-            className={`h-4 w-4 shrink-0 text-stone-400 transition-transform ${
+            className={`h-4 w-4 shrink-0 text-[#a08a72] transition-transform ${
               open ? "rotate-180" : ""
             }`}
           >
@@ -542,12 +544,12 @@ function CashCalculator({
       <div
         id="cash-calc"
         hidden={!open}
-        className="space-y-3 border-t border-stone-100 px-3 pt-2.5 pb-3"
+        className="space-y-3 border-t border-[#efe5d4] px-3 pt-2.5 pb-3"
       >
-        <p className="text-xs text-stone-500">{t.counter.cashHint}</p>
+        <p className="text-xs text-[#856f58]">{t.counter.cashHint}</p>
 
         <div>
-          <p className="text-[10px] font-semibold tracking-widest text-stone-400 uppercase">
+          <p className="text-[10px] font-semibold tracking-widest text-[#a08a72] uppercase">
             {t.counter.cashNotes}
           </p>
           <div className="mt-1 grid grid-cols-4 gap-1.5">
@@ -556,7 +558,7 @@ function CashCalculator({
                 key={note}
                 type="button"
                 onClick={() => onAdd(note)}
-                className="h-10 rounded-lg bg-stone-100 text-sm font-semibold text-stone-800 transition-colors hover:bg-stone-200 active:bg-stone-300"
+                className="h-10 rounded-lg bg-[#f4ecdd] text-sm font-semibold text-[#4b2f19] transition-colors hover:bg-[#eadfcc] active:bg-[#d9cbb4]"
               >
                 {yen(note)}
               </button>
@@ -565,7 +567,7 @@ function CashCalculator({
         </div>
 
         <div>
-          <p className="text-[10px] font-semibold tracking-widest text-stone-400 uppercase">
+          <p className="text-[10px] font-semibold tracking-widest text-[#a08a72] uppercase">
             {t.counter.cashCoins}
           </p>
           <div className="mt-1 grid grid-cols-3 gap-1.5">
@@ -574,7 +576,7 @@ function CashCalculator({
                 key={coin}
                 type="button"
                 onClick={() => onAdd(coin)}
-                className="h-9 rounded-lg bg-stone-100 text-sm font-semibold text-stone-800 transition-colors hover:bg-stone-200 active:bg-stone-300"
+                className="h-9 rounded-lg bg-[#f4ecdd] text-sm font-semibold text-[#4b2f19] transition-colors hover:bg-[#eadfcc] active:bg-[#d9cbb4]"
               >
                 {yen(coin)}
               </button>
@@ -582,8 +584,8 @@ function CashCalculator({
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-3 rounded-lg bg-stone-50 px-3 py-2">
-          <span className="text-xs font-medium text-stone-500">
+        <div className="flex items-center justify-between gap-3 rounded-lg bg-[#fbf6ea] px-3 py-2">
+          <span className="text-xs font-medium text-[#856f58]">
             {t.counter.cashReceived}
           </span>
           <span
@@ -596,7 +598,7 @@ function CashCalculator({
             type="button"
             onClick={onClear}
             disabled={received === 0}
-            className="text-xs text-stone-400 hover:text-red-600 disabled:opacity-40"
+            className="text-xs text-[#a08a72] hover:text-[#b3261e] disabled:opacity-40"
           >
             {t.counter.cashClear}
           </button>
@@ -613,7 +615,7 @@ function CashCalculator({
         {result !== null ? (
           <div
             className={`rounded-lg px-3 py-2 ${
-              result >= 0 ? "bg-green-50 text-green-900" : "bg-red-50 text-red-700"
+              result >= 0 ? "bg-[#eef4f4] text-[#0f4350]" : "bg-[#f9e7e2] text-[#8f2a20]"
             }`}
           >
             <div className="flex items-baseline justify-between gap-2">
@@ -655,24 +657,24 @@ function ReadyRail({
   return (
     <section
       aria-label={t.counter.readyTab}
-      className="sticky top-[77px] z-10 -mx-4 -mt-4 mb-4 border-b border-stone-200 bg-paper/95 px-4 pt-2.5 pb-3 backdrop-blur sm:top-[69px]"
+      className="sticky top-[77px] z-10 -mx-4 -mt-4 mb-4 border-b border-[#e7dcc7] bg-paper/95 px-4 pt-2.5 pb-3 backdrop-blur sm:top-[69px]"
     >
       <div className="mb-1.5 flex items-center gap-2">
-        <h2 className="text-xs font-semibold tracking-widest text-stone-500 uppercase">
+        <h2 className="text-xs font-semibold tracking-widest text-[#856f58] uppercase">
           {t.counter.readyTab}
         </h2>
-        <span className="rounded-md bg-green-100 px-1.5 py-0.5 text-xs font-semibold text-green-800 tabular-nums">
+        <span className="rounded-md bg-[#e3ecec] px-1.5 py-0.5 text-xs font-semibold text-[#15505e] tabular-nums">
           {orders.length}
         </span>
         {orders.length > 0 ? (
-          <span className="ml-auto text-xs text-stone-400">
+          <span className="ml-auto text-xs text-[#a08a72]">
             {fill(t.queue.readyCount, { n: orders.length })}
           </span>
         ) : null}
       </div>
 
       {orders.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-stone-300 px-3 py-2 text-sm text-stone-500">
+        <p className="rounded-lg border border-dashed border-[#d9cbb4] px-3 py-2 text-sm text-[#856f58]">
           {t.counter.emptyReady}
         </p>
       ) : (
@@ -699,8 +701,8 @@ function ReadyRail({
                 <Card className="flex h-full flex-col p-2.5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex min-w-0 items-center gap-1.5">
-                      <p className="min-w-0 truncate text-xs text-stone-500">
-                        <span className="mr-1.5 text-xl leading-none font-bold text-stone-900">
+                      <p className="min-w-0 truncate text-xs text-[#856f58]">
+                        <span className="mr-1.5 text-xl leading-none font-bold text-[#402000]">
                           #{order.number}
                         </span>
                         {order.customerName || t.common.noName}
@@ -711,7 +713,7 @@ function ReadyRail({
                             part: order.part,
                             parts: order.parts,
                           })}
-                          className="shrink-0 rounded bg-amber-100 px-1 py-0.5 text-[10px] font-semibold text-amber-900 tabular-nums"
+                          className="shrink-0 rounded bg-[#fff3c9] px-1 py-0.5 text-[10px] font-semibold text-[#6b4a00] tabular-nums"
                         >
                           {order.part}/{order.parts}
                         </span>
@@ -720,21 +722,21 @@ function ReadyRail({
                     <span
                       className={`shrink-0 rounded-md px-1.5 py-0.5 text-[11px] font-semibold tabular-nums ${
                         late
-                          ? "bg-red-600 text-white"
+                          ? "bg-[#b3261e] text-[#fffef6]"
                           : slow
-                            ? "bg-amber-500 text-white"
-                            : "bg-stone-100 text-stone-600"
+                            ? "bg-[#fff9e6]0 text-[#fffef6]"
+                            : "bg-[#f4ecdd] text-[#6b5544]"
                       }`}
                     >
                       {elapsedLabel(waited, locale)}
                     </span>
                   </div>
 
-                  <p className="mt-1 truncate text-xs text-stone-600" title={summary}>
+                  <p className="mt-1 truncate text-xs text-[#6b5544]" title={summary}>
                     {summary}
                   </p>
                   {order.note ? (
-                    <p className="mt-0.5 truncate text-[11px] font-medium text-amber-700">
+                    <p className="mt-0.5 truncate text-[11px] font-medium text-[#8a5a00]">
                       {order.note}
                     </p>
                   ) : null}
@@ -752,7 +754,7 @@ function ReadyRail({
                     <button
                       type="button"
                       onClick={() => onCancel(order.id, order.number)}
-                      className="px-2 py-1 text-xs text-stone-400 hover:text-red-600"
+                      className="px-2 py-1 text-xs text-[#a08a72] hover:text-[#b3261e]"
                     >
                       {t.counter.cancelAction}
                     </button>

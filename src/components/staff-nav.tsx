@@ -5,7 +5,7 @@ import { logout } from "@/lib/actions/auth";
 import { getDict } from "@/lib/i18n/locale";
 
 const linkClass =
-  "rounded-lg px-2.5 py-1.5 text-sm font-medium text-stone-600 hover:bg-stone-200/70";
+  "rounded-lg px-2.5 py-1.5 text-sm font-medium text-[#6b5544] hover:bg-[#f4ecdd]";
 
 export async function StaffNav({ mode }: { mode: "front" | "back" }) {
   const { locale, t } = await getDict();

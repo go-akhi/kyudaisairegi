@@ -105,37 +105,37 @@ export default async function AdminPage({
 
       <main className="mx-auto w-full max-w-4xl flex-1 space-y-5 px-4 py-5">
         {errorMessage ? (
-          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+          <p className="rounded-lg bg-[#f9e7e2] px-4 py-3 text-sm text-[#8f2a20]">
             {errorMessage}
           </p>
         ) : null}
         {savedMessage ? (
-          <p className="rounded-xl bg-green-50 px-4 py-3 text-sm text-green-800">
+          <p className="rounded-lg bg-[#eef4f4] px-4 py-3 text-sm text-[#15505e]">
             {savedMessage}
           </p>
         ) : null}
 
         <Card className="p-4">
           <h2 className="font-semibold">{t.admin.today}</h2>
-          <p className="mt-1 text-sm text-stone-500">
+          <p className="mt-1 text-sm text-[#856f58]">
             {fill(t.admin.jst, { day: today })}
           </p>
           <div className="mt-3 flex gap-6">
             <div>
               <p className="text-2xl font-semibold">{totals.orders}</p>
-              <p className="text-xs tracking-wide text-stone-500 uppercase">
+              <p className="text-xs tracking-wide text-[#856f58] uppercase">
                 {t.admin.orders}
               </p>
             </div>
             <div>
               <p className="text-2xl font-semibold">{yen(totals.revenue)}</p>
-              <p className="text-xs tracking-wide text-stone-500 uppercase">
+              <p className="text-xs tracking-wide text-[#856f58] uppercase">
                 {t.admin.takings}
               </p>
             </div>
             <div>
               <p className="text-2xl font-semibold">{stallRows.length}</p>
-              <p className="text-xs tracking-wide text-stone-500 uppercase">
+              <p className="text-xs tracking-wide text-[#856f58] uppercase">
                 {t.admin.stallCount}
               </p>
             </div>
@@ -182,12 +182,12 @@ export default async function AdminPage({
         </Card>
 
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold tracking-widest text-stone-500 uppercase">
+          <h2 className="text-sm font-semibold tracking-widest text-[#856f58] uppercase">
             {t.admin.sectionStalls}
           </h2>
 
           {stallRows.length === 0 ? (
-            <p className="text-sm text-stone-500">{t.admin.noStalls}</p>
+            <p className="text-sm text-[#856f58]">{t.admin.noStalls}</p>
           ) : null}
 
           {stallRows.map(({ stall, username }, index) => {
@@ -210,7 +210,7 @@ export default async function AdminPage({
                         </Badge>
                       ) : null}
                     </div>
-                    <p className="mt-0.5 text-sm text-stone-500">
+                    <p className="mt-0.5 text-sm text-[#856f58]">
                       {username ?? t.admin.noAccount} ·{" "}
                       <a
                         href={`/s/${stall.slug}`}
@@ -223,7 +223,7 @@ export default async function AdminPage({
 
                   <div className="text-right text-sm">
                     <p className="font-semibold">{yen(sales?.revenue ?? 0)}</p>
-                    <p className="text-stone-500">
+                    <p className="text-[#856f58]">
                       {fill(t.admin.ordersToday, { n: sales?.orderCount ?? 0 })}
                     </p>
                   </div>
@@ -243,17 +243,17 @@ export default async function AdminPage({
                   </form>
 
                   <details className="rounded-lg">
-                    <summary className="inline-flex h-9 cursor-pointer items-center rounded-xl px-3 text-sm font-medium text-stone-700 hover:bg-stone-200/70">
+                    <summary className="inline-flex h-9 cursor-pointer items-center rounded-lg px-3 text-sm font-medium text-[#614b37] hover:bg-[#f4ecdd]">
                       {t.admin.qr}
                     </summary>
                     <div
-                      className="mt-2 inline-block rounded-xl bg-white p-2 ring-1 ring-stone-200 [&_svg]:h-40 [&_svg]:w-40"
+                      className="mt-2 inline-block rounded-lg bg-white p-2 ring-1 ring-[#e7dcc7] [&_svg]:h-40 [&_svg]:w-40"
                       dangerouslySetInnerHTML={{ __html: qrs[index] }}
                     />
                   </details>
 
                   <details className="rounded-lg">
-                    <summary className="inline-flex h-9 cursor-pointer items-center rounded-xl px-3 text-sm font-medium text-stone-700 hover:bg-stone-200/70">
+                    <summary className="inline-flex h-9 cursor-pointer items-center rounded-lg px-3 text-sm font-medium text-[#614b37] hover:bg-[#f4ecdd]">
                       {t.admin.resetPassword}
                     </summary>
                     <form
@@ -276,12 +276,12 @@ export default async function AdminPage({
                   </details>
 
                   <details className="ml-auto rounded-lg">
-                    <summary className="inline-flex h-9 cursor-pointer items-center rounded-xl px-3 text-sm font-medium text-red-600 hover:bg-red-50">
+                    <summary className="inline-flex h-9 cursor-pointer items-center rounded-lg px-3 text-sm font-medium text-[#b3261e] hover:bg-[#f9e7e2]">
                       {t.admin.delete}
                     </summary>
                     <form action={deleteStall} className="mt-2 flex items-center gap-2">
                       <input type="hidden" name="stallId" value={stall.id} />
-                      <span className="text-sm text-stone-500">
+                      <span className="text-sm text-[#856f58]">
                         {t.admin.deleteHelp}
                       </span>
                       <Button type="submit" variant="danger" size="sm">

@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-geist-sans), "Hiragino Sans", "Noto Sans JP", Meiryo,
-    system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --color-paper: #faf8f4;
+  --font-sans: "Segoe UI", "Segoe UI Web (West European)", -apple-system,
+    BlinkMacSystemFont, Roboto, "Helvetica Neue", "Hiragino Kaku Gothic ProN",
+    "Hiragino Sans", Meiryo, "Noto Sans JP", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --color-paper: #fffef6;
 
   /* palette lifted from kyudaisai.jp/79th */
   --color-festival-cream: #fffef6;
@@ -33,7 +34,7 @@ html {
 
 body {
   background: var(--color-paper);
-  color: #1c1917;
+  color: #402000;
   font-family: var(--font-sans);
   overscroll-behavior-y: none;
 }
@@ -44,13 +45,6 @@ input,
 select,
 textarea {
   -webkit-tap-highlight-color: transparent;
-}
-
-/* marketing pages borrow the Segoe UI feel of microsoft.com */
-.font-landing {
-  font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system,
-    BlinkMacSystemFont, Roboto, "Helvetica Neue", "Hiragino Kaku Gothic ProN",
-    "Hiragino Sans", Meiryo, "Noto Sans JP", sans-serif;
 }
 
 /* number inputs: keep spinners off the way of fat fingers */

@@ -12,11 +12,11 @@ export default async function StallsPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="border-b border-stone-200 bg-paper/95 backdrop-blur">
+      <header className="border-b border-[#e7dcc7] bg-paper/95 backdrop-blur">
         <div className="mx-auto flex max-w-4xl items-center gap-3 px-5 py-3">
           <Link
             href="/"
-            className="text-sm font-medium text-stone-500 hover:text-stone-900"
+            className="text-sm font-medium text-[#856f58] hover:text-[#402000]"
           >
             ← {t.landing.brand}
           </Link>
@@ -32,13 +32,13 @@ export default async function StallsPage() {
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-10">
         <header className="mb-8">
-          <p className="text-sm font-semibold tracking-widest text-orange-700 uppercase">
+          <p className="text-sm font-semibold tracking-widest text-[#993333] uppercase">
             {t.festival.eyebrow}
           </p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight">
             {t.festival.title}
           </h1>
-          <p className="mt-1 text-sm text-stone-500">{t.festival.subtitle}</p>
+          <p className="mt-1 text-sm text-[#856f58]">{t.festival.subtitle}</p>
         </header>
 
         {stalls.length === 0 ? (
@@ -48,8 +48,8 @@ export default async function StallsPage() {
             {stalls.map((stall) => (
               <li key={stall.id}>
                 <Link href={`/s/${stall.slug}`} className="group block">
-                  <Card className="overflow-hidden transition group-hover:ring-stone-400">
-                    <div className="aspect-[16/9] bg-stone-100">
+                  <Card className="overflow-hidden transition group-hover:ring-[#c7b299]">
+                    <div className="aspect-[16/9] bg-[#f4ecdd]">
                       {stall.heroImage ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -75,10 +75,10 @@ export default async function StallsPage() {
                         )}
                       </div>
                       {stall.locationNote ? (
-                        <p className="mt-1 text-sm text-stone-500">{stall.locationNote}</p>
+                        <p className="mt-1 text-sm text-[#856f58]">{stall.locationNote}</p>
                       ) : null}
                       {stall.salePct > 0 ? (
-                        <p className="mt-2 text-sm font-semibold text-orange-700">
+                        <p className="mt-2 text-sm font-semibold text-[#993333]">
                           {fill(t.menu.saleBanner, { pct: stall.salePct })}
                         </p>
                       ) : null}
@@ -90,7 +90,7 @@ export default async function StallsPage() {
           </ul>
         )}
 
-        <p className="mt-10 text-center text-xs text-stone-400">
+        <p className="mt-10 text-center text-xs text-[#a08a72]">
           {t.festival.staff}{" "}
           <Link href="/login" className="underline">
             {t.login.submit}

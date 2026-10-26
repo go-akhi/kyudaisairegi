@@ -26,11 +26,11 @@ export default async function ModePage({
     <main className="mx-auto w-full max-w-lg flex-1 px-5 py-10">
       <div className="mb-8 flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold tracking-widest text-orange-700 uppercase">
+          <p className="text-sm font-semibold tracking-widest text-[#993333] uppercase">
             {account.username}
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight">{t.mode.title}</h1>
-          <p className="mt-1 text-sm text-stone-500">{t.mode.subtitle}</p>
+          <p className="mt-1 text-sm text-[#856f58]">{t.mode.subtitle}</p>
         </div>
         <LocaleSwitcher
           current={locale}
@@ -55,11 +55,11 @@ export default async function ModePage({
             type="submit"
             name="mode"
             value="front"
-            className="group rounded-2xl bg-white p-5 text-left ring-1 ring-stone-200 transition hover:ring-stone-900"
+            className="group rounded-lg bg-white p-5 text-left ring-1 ring-[#e7dcc7] transition hover:ring-[#993333]"
           >
             <span className="block text-2xl">🧾</span>
             <span className="mt-2 block text-lg font-semibold">{t.mode.front}</span>
-            <span className="mt-1 block text-sm text-stone-500">
+            <span className="mt-1 block text-sm text-[#856f58]">
               {t.mode.frontDesc}
             </span>
           </button>
@@ -68,11 +68,11 @@ export default async function ModePage({
             type="submit"
             name="mode"
             value="back"
-            className="group rounded-2xl bg-white p-5 text-left ring-1 ring-stone-200 transition hover:ring-stone-900"
+            className="group rounded-lg bg-white p-5 text-left ring-1 ring-[#e7dcc7] transition hover:ring-[#993333]"
           >
             <span className="block text-2xl">🔥</span>
             <span className="mt-2 block text-lg font-semibold">{t.mode.back}</span>
-            <span className="mt-1 block text-sm text-stone-500">
+            <span className="mt-1 block text-sm text-[#856f58]">
               {t.mode.backDesc}
             </span>
           </button>
@@ -80,7 +80,7 @@ export default async function ModePage({
       </form>
 
       <Card className="mt-8 flex items-center justify-between p-4">
-        <span className="text-sm text-stone-500">
+        <span className="text-sm text-[#856f58]">
           {fill(t.mode.signedInAs, { name: account.username })}
         </span>
         <form action={logout}>
