@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BrandMark } from "@/components/brand-mark";
 import { LocaleSwitcher } from "@/components/locale-switcher";
@@ -23,12 +24,16 @@ export default async function LoginPage({
   return (
     <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-5 py-10">
       <div className="mb-8">
-        <div className="flex items-center gap-2.5">
+        <Link
+          href="/"
+          title={t.landing.brand}
+          className="group inline-flex items-center gap-2.5 rounded-[3px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#993333]"
+        >
           <BrandMark className="h-8 w-8" />
-          <p className="text-sm font-semibold tracking-widest text-[#993333] uppercase">
+          <span className="text-sm font-semibold tracking-widest text-[#993333] uppercase underline-offset-4 group-hover:underline">
             {t.login.eyebrow}
-          </p>
-        </div>
+          </span>
+        </Link>
         <h1 className="mt-3 text-2xl font-semibold tracking-tight">{t.login.title}</h1>
         <p className="mt-1 text-sm text-[#856f58]">{t.login.subtitle}</p>
       </div>
