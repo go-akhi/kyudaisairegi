@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kyudaisai
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kyudaisai}
+      POSTGRES_DB: kyudaisai
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      # localhost only — nothing on this box should expose Postgres to the LAN
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kyudaisai -d kyudaisai"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://kyudaisai:${POSTGRES_PASSWORD:-kyudaisai}@db:5432/kyudaisai
+      APP_URL: ${APP_URL}
+      TZ: Asia/Tokyo
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      # uploaded menu photos live outside the image so deploys never wipe them
+      - uploads:/app/data/uploads
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN}
+    depends_on:
+      - app
+
+volumes:
+  pgdata:
+  uploads:
