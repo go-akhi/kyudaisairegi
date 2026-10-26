@@ -198,18 +198,19 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-4">
-      <ReadyRail
-        tickets={ready}
-        busyId={busyId}
-        onHandOver={handOver}
-        onCancel={cancel}
-        locale={locale}
-        t={t}
-      />
+    <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-4">
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="min-w-0">
+          <ReadyRail
+            tickets={ready}
+            busyId={busyId}
+            onHandOver={handOver}
+            onCancel={cancel}
+            locale={locale}
+            t={t}
+          />
 
-      <div className="grid items-start gap-4 lg:grid-cols-[1fr_380px]">
-        <div className="space-y-7">
+          <div className="space-y-7">
           {sections.length === 0 ? <Empty>{t.counter.noItems}</Empty> : null}
 
           {sections.map((section) => (
@@ -298,12 +299,12 @@ export function CounterScreen({ categories, uncategorised, salePct, locale, t }:
               </div>
             </section>
           ))}
+          </div>
         </div>
 
-        {/* Sticky only when collapsed: an open calculator plus the order card is
-            taller than a tablet screen, and a sticky aside would hide the
-            Place order button. */}
-        <aside className={cashOpen ? "" : "lg:sticky lg:top-4"}>
+        {/* Perpetual landscape sidebar: stays put while the menu scrolls, and
+            scrolls internally so Place order is reachable on shorter screens. */}
+        <aside className="lg:sticky lg:top-[85px] lg:max-h-[calc(100dvh-101px)] lg:overflow-y-auto lg:overscroll-contain">
           <CashCalculator
             open={cashOpen}
             onToggle={() => setCashOpen((open) => !open)}
@@ -666,7 +667,7 @@ function ReadyRail({
   return (
     <section
       aria-label={t.counter.readyTab}
-      className="sticky top-[77px] z-10 -mx-4 -mt-4 mb-4 border-b border-[#e7dcc7] bg-paper/95 px-4 pt-2.5 pb-3 backdrop-blur sm:top-[69px]"
+      className="sticky top-[77px] z-10 mb-4 border-b border-[#e7dcc7] bg-paper/95 pt-2.5 pb-3 backdrop-blur sm:top-[69px]"
     >
       <div className="mb-1.5 flex items-center gap-2">
         <h2 className="text-xs font-semibold tracking-widest text-[#856f58] uppercase">
