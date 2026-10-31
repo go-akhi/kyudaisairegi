@@ -3,7 +3,7 @@ import { getLocale } from "@/lib/i18n/locale";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(process.env.APP_URL ?? "http://localhost:1717"),
   title: "Q-Regi",
   description: "Festival stall ordering and kitchen queue",
   applicationName: "Q-Regi",

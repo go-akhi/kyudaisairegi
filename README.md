@@ -30,7 +30,7 @@ docker compose up -d db
 pnpm install
 pnpm db:migrate               # create tables
 pnpm seed                     # creates the admin from .env
-pnpm dev                      # http://localhost:3000
+pnpm dev                      # http://localhost:1717
 ```
 
 Demo data (two stalls' worth of menu, plus test sessions) is optional:

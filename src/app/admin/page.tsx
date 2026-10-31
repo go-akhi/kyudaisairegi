@@ -56,7 +56,7 @@ export default async function AdminPage({
     { orders: 0, revenue: 0 },
   );
 
-  const appUrl = process.env.APP_URL ?? "http://localhost:3000";
+  const appUrl = process.env.APP_URL ?? "http://localhost:1717";
 
   const qrs = await Promise.all(
     stallRows.map(({ stall }) =>

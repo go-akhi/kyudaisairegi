@@ -34,7 +34,7 @@ export default async function ManagePage({
   const { categories, uncategorised } = await getMenu(stall.id);
   const { error, saved } = await searchParams;
 
-  const publicUrl = `${process.env.APP_URL ?? "http://localhost:3000"}/s/${stall.slug}`;
+  const publicUrl = `${process.env.APP_URL ?? "http://localhost:1717"}/s/${stall.slug}`;
   const qr = await QRCode.toString(publicUrl, {
     type: "svg",
     margin: 1,

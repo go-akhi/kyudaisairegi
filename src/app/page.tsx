@@ -98,7 +98,7 @@ export default async function LandingPage() {
   const stalls = await listStalls();
   const demoStall = stalls.find((stall) => stall.isOpen) ?? stalls[0] ?? null;
 
-  const appUrl = process.env.APP_URL ?? "http://localhost:3000";
+  const appUrl = process.env.APP_URL ?? "http://localhost:1717";
   const qr = demoStall
     ? await QRCode.toString(`${appUrl}/s/${demoStall.slug}`, {
         type: "svg",

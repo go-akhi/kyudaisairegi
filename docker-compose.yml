@@ -25,11 +25,12 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: production
+      PORT: 1717
       DATABASE_URL: postgres://kyudaisai:${POSTGRES_PASSWORD:-kyudaisai}@db:5432/kyudaisai
       APP_URL: ${APP_URL}
       TZ: Asia/Tokyo
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:1717:1717"
     volumes:
       # uploaded menu photos live outside the image so deploys never wipe them
       - uploads:/app/data/uploads

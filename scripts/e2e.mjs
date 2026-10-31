@@ -6,7 +6,7 @@
  */
 import { chromium } from "playwright-core";
 
-const BASE = process.env.E2E_URL ?? "http://localhost:3000";
+const BASE = process.env.E2E_URL ?? "http://localhost:1717";
 const STALL_USER = process.env.E2E_USER ?? "takoyaki";
 const STALL_PASS = process.env.E2E_PASS ?? "takoyaki123";
 
